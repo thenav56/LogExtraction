@@ -112,6 +112,7 @@ int main(int c, char ** args) {
 		for (auto itr = best_lines[i].begin(); itr != best_lines[i].end(); ++itr) {
 			consts[itr->first] = 1;
 		}
+		cout << "Line " << i + 1 << ": ";
 		for (auto j = logs[i].begin(); j != logs[i].end(); ++j) {
 			if (consts[j->first]) cout << "[" << j->second << "]" ; else cout << "#";
 			cout << " ";
