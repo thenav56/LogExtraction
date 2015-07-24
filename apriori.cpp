@@ -36,6 +36,7 @@ void read(const char * file_name) {
 		logs.push_back(tokenize(s));
 	}
 }
+//complexity = O(ms.size()) , which is reasonable
 map<set<PIS>, int> refine(const map<set<PIS>, int> & ms) {
 	map<set<PIS>, int> res;
 	for (auto i = ms.begin(); i != ms.end(); ++i) {
@@ -47,8 +48,14 @@ map<set<PIS>, int> refine(const map<set<PIS>, int> & ms) {
 }
 set<set<PIS>> candidate_list(const map<set<PIS>, int> & ms, bool emp) {
 	set<set<PIS>> res;
+	set<PIS> newtoks;
 	for (auto i = ms.begin(); i != ms.end(); ++i) {
-		for (auto j = all_tokens.begin(); j != all_tokens.end(); ++j) {
+		for (auto j = i->first.begin(); j != i->first.end(); ++j) {
+			newtoks.insert(*j);
+		}
+	}
+	for (auto i = ms.begin(); i != ms.end(); ++i) {
+		for (auto j = newtoks.begin(); j != newtoks.end(); ++j) {
 			if (i->first.find(*j) == i->first.end()) {
 				set<PIS> ns;
 				if (!emp) ns = i->first;
@@ -98,26 +105,44 @@ int main(int c, char ** args) {
 	}
 	read(args[1]);
 	map<set<PIS>, int> maxsets;
-	maxsets[set<PIS>()] = 1; //put an empty set first
+	for (int i = 0; i < (int)logs.size(); ++i) {
+		for (auto j = logs[i].begin(); j != logs[i].end(); ++j) {
+			set<PIS> ns;
+			ns.insert(*j);
+			maxsets[ns]++;
+		}
+	}
+	maxsets = refine(maxsets);
 	best_lines = vector<set<PIS>>(logs.size(), set<PIS>());
 	//best_cnt = vector<int>(logs.size(), 0);
 	for (int iter = 0; !maxsets.empty(); ++iter) {
+		setnewbest(maxsets);
 		set<set<PIS>> clist = candidate_list(maxsets, iter == 0);
 		maxsets = countSets(clist);
 		maxsets = refine(maxsets);
-		setnewbest(maxsets);
 	}
+	map<set<PIS>, set<int>> clusters;
 	for (int i = 0; i < (int)logs.size(); ++i) {
-		vector<bool> consts(logs[i].size(), 0);
-		for (auto itr = best_lines[i].begin(); itr != best_lines[i].end(); ++itr) {
+		clusters[best_lines[i]].insert(i);
+	}
+	for (auto i : clusters) {
+		vector<bool> consts(1000, 0); //maximum token length of each cluster
+		for (auto itr = i.first.begin(); itr != i.first.end(); ++itr) {
 			consts[itr->first] = 1;
 		}
-		cout << "Line " << i + 1 << ": ";
-		for (auto j = logs[i].begin(); j != logs[i].end(); ++j) {
+		cout << "Cluster Pattern: ";
+		for (auto j = logs[*i.second.begin()].begin(); j != logs[*i.second.begin()].end(); ++j) {
 			if (consts[j->first]) cout << "[" << j->second << "]" ; else cout << "#";
 			cout << " ";
 		}
 		cout << "\n";
+		for (auto j : i.second) {
+			cout << "Line " << j + 1 << ": ";
+			for (auto k : logs[j]) {
+				cout << k.second << " ";
+			}
+			cout << "\n";
+		}
 	}
 	return 0;
 }
