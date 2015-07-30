@@ -18,7 +18,7 @@ struct FPTree {
 			Node * parent;
 			T key; //initializes itself 
 			int count;
-			Node () : child(), parent(0), count(0) { }
+			Node () : parent(0), count(0) { }
 			~Node() {
 				for (Node * i : child) {
 					delete i;
@@ -33,7 +33,7 @@ struct FPTree {
 		//assumes that log is sorted according to the support count in descending
 		//order and also the log file is clean in the sense that all tokens have
 		//support count at least SUPPORT
-		void insert_log(const std::vector<std::pair<int, T>> & log_data) {
+		void insert_log(const std::vector<std::pair<int, T>> & log_data, bool conditional = 0) {
 			if (root == 0) root = new Node();
 			Node * cur = root;
 			for (auto & i : log_data) {
@@ -51,26 +51,39 @@ struct FPTree {
 					header[nd->key].push_back(nd);
 					cur->child.push_back(nd);
 				}
-				nd->count++;
+				nd->count += (conditional ? i.first : 1);
 				cur = nd;
 			}
 		}
-		void print(Node * nd, std::vector<T> res) {
-			bool leaf = 1;
+		void print(Node * nd, std::vector<std::pair<int, T>> res) {
+			for (auto i : res) {
+				std::cout << "[" << i.second << "=>" << i.first << "], ";
+			}
+			std::cout << "\n";
 			for (Node * i : nd->child) {
 				if (i) {
-					leaf = 0;
-					res.push_back(i->key);
+					res.emplace_back(i->count, i->key);
 					print(i, res);
 					res.pop_back();
 				}
 			}
-			if (leaf) {
-				for (auto i : res) {
-					std::cout << "[" << i << "=>" << count[i] << "], ";
+		}
+		//build conditional pattern base for given token
+		std::vector<std::vector<std::pair<int, T>>> build_pattern_base(const T & token) {
+			std::list<Node * > & tok_list = header[token];
+			std::vector<std::vector<std::pair<int, T>>> res;
+			for (auto & i : tok_list) {
+				Node * cur = i;
+				std::vector<std::pair<int, T>> prefix_path;
+				cur = cur->parent; //skip "token" whose pattern base we are building
+				while (cur->parent) {//repeat until we encounter the root 
+					prefix_path.emplace_back(i->count, cur->key);
+					cur = cur->parent;
 				}
-				std::cout << "\n";
+				reverse(prefix_path.begin(), prefix_path.end());
+				if (!prefix_path.empty()) res.push_back(prefix_path);
 			}
+			return res;
 		}
 	public:
 		FPTree() : root(0) { }
@@ -88,8 +101,47 @@ struct FPTree {
 				insert_log(log_data);
 			}
 		}
+		bool islinkedlist() const {//returns true if FP tree is a single path or linked list
+			Node * cur = root;
+			while (cur) {
+				if (cur->child.size() > 1) return 0;
+				if (!cur->child.empty()) cur = cur->child[0];
+			}
+			return 1;
+		}
+		
+		std::vector<std::vector<T>> mine() {
+			if (!root || root->child.empty()) {
+				std::vector<std::vector<T>> r;
+				r.push_back(std::vector<T>());
+				return r;
+			}
+			std::vector<std::vector<T>> res;
+			for (auto i : count) {
+				if (i.second >= SUPPORT) {
+					auto r = build_pattern_base(i.first);
+					FPTree cond_fp_tree;
+					for (auto & j : r) {
+						cond_fp_tree.insert_log(j, true);
+						for (auto & k : j) {
+							cond_fp_tree.count[k.second] += k.first;
+						}
+					}
+					//std::cout << "conditional fp tree for\n" << " " << i.first << "\n";
+					//cond_fp_tree.traverse();
+					//std::cin.get();
+					auto ptrns = cond_fp_tree.mine();
+					for (auto & k : ptrns) {
+						k.push_back(i.first);
+						res.push_back(k);
+						k.pop_back();
+					}
+				}
+			}
+			return res;
+		}
 		void traverse() {
-			print(root, std::vector<T>());
+			if (root) print(root, std::vector<std::pair<int, T>>());
 		}
 		~FPTree() {
 			delete root;
