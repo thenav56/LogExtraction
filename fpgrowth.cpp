@@ -31,7 +31,7 @@ int main(int cnt, char * args[]) {
 	} else {
 		FPTree<string> tree;
 		tree.build(read(args[1]));
-		//tree.traverse();
+		tree.traverse();
 		auto r = tree.mine();
 		cout << "Frequent patterns: " << r.size() << "\n";
 		for (auto i : r) {

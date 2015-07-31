@@ -8,7 +8,10 @@
 #include <utility>
 #include <list>
 
-const int SUPPORT = 2;
+#undef DBG
+
+const int SUPPORT = 3;
+
 
 template <typename T>
 struct FPTree {
@@ -105,16 +108,14 @@ struct FPTree {
 			Node * cur = root;
 			while (cur) {
 				if (cur->child.size() > 1) return 0;
-				if (!cur->child.empty()) cur = cur->child[0];
+				cur = cur->child.empty() ? nullptr : cur->child[0];
 			}
 			return 1;
 		}
 		
 		std::vector<std::vector<T>> mine() {
 			if (!root || root->child.empty()) {
-				std::vector<std::vector<T>> r;
-				r.push_back(std::vector<T>());
-				return r;
+				return std::vector<std::vector<T>>();
 			}
 			std::vector<std::vector<T>> res;
 			for (auto i : count) {
@@ -127,15 +128,27 @@ struct FPTree {
 							cond_fp_tree.count[k.second] += k.first;
 						}
 					}
-					//std::cout << "conditional fp tree for\n" << " " << i.first << "\n";
-					//cond_fp_tree.traverse();
-					//std::cin.get();
+#ifdef DEBUG
+					std::cout << "conditional fp tree for " << i.first << "\n";
+					cond_fp_tree.traverse();
+					std::cin.get();
+#endif
 					auto ptrns = cond_fp_tree.mine();
+					ptrns.push_back(std::vector<T>());
+#ifdef DBG
+					std::cout << "patterns: conditional fp tree for " << i.first << "\n";
+#endif
 					for (auto & k : ptrns) {
 						k.push_back(i.first);
 						res.push_back(k);
-						k.pop_back();
+#ifdef DBG
+						for (auto j : k) std::cout << j << " ";
+						std::cout << "\n";
+#endif
 					}
+#ifdef DBG
+					std::cin.get();
+#endif
 				}
 			}
 			return res;
