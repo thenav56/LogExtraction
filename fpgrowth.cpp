@@ -2,22 +2,23 @@
 #include "fptree.h"
 
 using namespace std;
-vector<string> 
+
+vector<pair<int, string>> 
 tokenize(string s) {
 	istringstream is(s);
-	vector<string> res;
+	vector<pair<int, string>> res;
 	string t;
 	for (int i = 0; is >> t; ++i) {
-		res.push_back(t);
+		res.emplace_back(i, t);
 	}
 	return res;
 }
 
-vector<vector<string>> 
+vector<vector<pair<int, string>>> 
 read(const char * file_name) {
 	ifstream file(file_name);
 	string s;
-	vector<vector<string>> res;
+	vector<vector<pair<int, string>>> res;
 	while (getline(file, s)) {
 		res.push_back(tokenize(s));
 	}
@@ -25,18 +26,20 @@ read(const char * file_name) {
 }
 
 int main(int cnt, char * args[]) {
-	if (cnt < 2) {
-		cout << "fptree build test\n";
-		cout << "Usage: program_name log_file\n";
+	if (cnt < 3) {
+		cout << "FP GROWTH ALGORITHM IMPLEMENTATION\n";
+		cout << "Usage: program_name log_file support_value\n";
 	} else {
-		FPTree<string> tree;
+		int s = atoi(args[2]);
+		FPTree<pair<int, string>> tree(s);
+		//consider the position of token in the line
 		tree.build(read(args[1]));
-		tree.traverse();
+		//tree.traverse();
 		auto r = tree.mine();
 		cout << "Frequent patterns: " << r.size() << "\n";
 		for (auto i : r) {
 			for (auto j : i) {
-				cout << j << " ";
+				cout << j.second << " ";
 			}
 			cout << "\n";
 		}

@@ -10,9 +10,6 @@
 
 #undef DBG
 
-const int SUPPORT = 3;
-
-
 template <typename T>
 struct FPTree {
 	private:
@@ -32,7 +29,7 @@ struct FPTree {
 		Node * root;
 		std::map<T, int> count;
 		std::map<T, std::list<Node *>> header; //table of linked list for each token
-
+		const int SUPPORT; //support or threshold value for the algorithm
 		//assumes that log is sorted according to the support count in descending
 		//order and also the log file is clean in the sense that all tokens have
 		//support count at least SUPPORT
@@ -89,7 +86,7 @@ struct FPTree {
 			return res;
 		}
 	public:
-		FPTree() : root(0) { }
+		FPTree(int support) : root(0), SUPPORT(support) { }
 		void build(const std::vector<std::vector<T>> & logs) {
 			for (auto & i : logs) {
 				for (auto & j : i) count[j]++;
@@ -104,14 +101,6 @@ struct FPTree {
 				insert_log(log_data);
 			}
 		}
-		bool islinkedlist() const {//returns true if FP tree is a single path or linked list
-			Node * cur = root;
-			while (cur) {
-				if (cur->child.size() > 1) return 0;
-				cur = cur->child.empty() ? nullptr : cur->child[0];
-			}
-			return 1;
-		}
 		
 		std::vector<std::vector<T>> mine() {
 			if (!root || root->child.empty()) {
@@ -121,14 +110,14 @@ struct FPTree {
 			for (auto i : count) {
 				if (i.second >= SUPPORT) {
 					auto r = build_pattern_base(i.first);
-					FPTree cond_fp_tree;
+					FPTree cond_fp_tree(SUPPORT);
 					for (auto & j : r) {
 						cond_fp_tree.insert_log(j, true);
 						for (auto & k : j) {
 							cond_fp_tree.count[k.second] += k.first;
 						}
 					}
-#ifdef DEBUG
+#ifdef DBG
 					std::cout << "conditional fp tree for " << i.first << "\n";
 					cond_fp_tree.traverse();
 					std::cin.get();
