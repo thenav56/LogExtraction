@@ -30,13 +30,21 @@ struct FPTree {
 		std::map<T, int> count;
 		std::map<T, std::list<Node *>> header; //table of linked list for each token
 		const int SUPPORT; //support or threshold value for the algorithm
+
 		//assumes that log is sorted according to the support count in descending
-		//order and also the log file is clean in the sense that all tokens have
-		//support count at least SUPPORT
+		//order, support count of a token is not constrained (may be < support or >= support)
+		//preconditions: "std::map<T, int>" count variable must be filled with the count
+		//of each tokens in the log_data before calling this function
 		void insert_log(const std::vector<std::pair<int, T>> & log_data, bool conditional = 0) {
 			if (root == 0) root = new Node();
 			Node * cur = root;
 			for (auto & i : log_data) {
+				//ALPHA PRUNING
+				//remove those nodes that have support count less than SUPPORT
+				//resulting in compact fp tree
+				//since the tokens are sorted in descending order according to the support count
+				//we can stop
+				if (count[i.second] < SUPPORT) break;
 				Node * nd = 0;
 				for (auto & j : cur->child) {
 					if (j->key == i.second) {
@@ -88,11 +96,13 @@ struct FPTree {
 		bool isLinkedList() const {
 			Node * cur = root;
 			while (cur) {
-				if (cur->child.size() > 1) return 0;
-				cur = cur->child.empty() ? 0 : cur->child[0];
+				if (cur->child.size() > 1) return false;
+				cur = cur->child.empty() ? nullptr : cur->child[0];
 			}
-			return 1;
+			return true;
 		}
+		//each node in this fp tree has support count of at least SUPPORT
+		//before being mined
 		void mine(std::vector<T> & pattern, std::vector<std::vector<T>> & pattern_bin) const {
 			if (!root || root->child.empty()) return ;
 			//for maximal frequent itemset
@@ -100,10 +110,12 @@ struct FPTree {
 				Node * cur = root;
 				std::vector<T> p = pattern;
 				while (cur) {
-					if (count.find(cur->key)->second >= SUPPORT) p.push_back(cur->key);
+					//root node's values are dummies, skip the root node
 					cur = cur->child.empty() ? 0 : cur->child[0];
+					if (cur) p.push_back(cur->key);
 				}
-				pattern_bin.push_back(p);
+				//newer pattern
+				if (p.size() > pattern.size()) pattern_bin.push_back(p);
 				return ;
 			}
 			std::vector<std::vector<T>> res;
@@ -113,11 +125,24 @@ struct FPTree {
 					build_pattern_base(i.first, r);
 					FPTree cond_fp_tree(SUPPORT);
 					for (auto & j : r) {
-						cond_fp_tree.insert_log(j, true);
 						for (auto & k : j) {
 							cond_fp_tree.count[k.second] += k.first;
 						}
 					}
+					//arg.first unused(not needed) in cmp
+					auto cmp = [&](const std::pair<int, T> & a, const std::pair<int, T> & b) {
+						int ca = cond_fp_tree.count[a.second]; 
+						int cb = cond_fp_tree.count[b.second]; 
+						if (ca != cb) return ca > cb; //xXx
+						return a.second > b.second;
+					};
+					for (auto & j : r) {
+						std::sort(j.begin(), j.end(), cmp);
+					}
+					//the pattern base is used to create the conditional tree
+					//and each node in the new conditional tree has support count 
+					//at least SUPPORT
+					for (auto & j : r) cond_fp_tree.insert_log(j, true);
 #ifdef DBG
 					std::cout << "conditional fp tree for " << i.first << "\n";
 					cond_fp_tree.traverse();
@@ -164,3 +189,4 @@ struct FPTree {
 			delete root;
 		}
 };
+
