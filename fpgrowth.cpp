@@ -35,7 +35,8 @@ int main(int cnt, char * args[]) {
 		//consider the position of token in the line
 		tree.build(read(args[1]));
 		//tree.traverse();
-		auto r = tree.mine();
+		std::vector<std::vector<pair<int,  string>>> r;
+		tree.mine(r);
 		cout << "Frequent patterns: " << r.size() << "\n";
 		for (auto i : r) {
 			for (auto j : i) {
@@ -46,4 +47,3 @@ int main(int cnt, char * args[]) {
 	}
 	return 0;
 }
-

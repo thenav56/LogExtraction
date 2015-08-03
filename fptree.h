@@ -8,7 +8,7 @@
 #include <utility>
 #include <list>
 
-#undef DBG
+//#define DBG
 
 template <typename T>
 struct FPTree {
@@ -55,7 +55,7 @@ struct FPTree {
 				cur = nd;
 			}
 		}
-		void print(Node * nd, std::vector<std::pair<int, T>> res) {
+		void print(Node * nd, std::vector<std::pair<int, T>> & res) const {
 			for (auto i : res) {
 				std::cout << "[" << i.second << "=>" << i.first << "], ";
 			}
@@ -69,9 +69,8 @@ struct FPTree {
 			}
 		}
 		//build conditional pattern base for given token
-		std::vector<std::vector<std::pair<int, T>>> build_pattern_base(const T & token) {
-			std::list<Node * > & tok_list = header[token];
-			std::vector<std::vector<std::pair<int, T>>> res;
+		void build_pattern_base(const T & token, std::vector<std::vector<std::pair<int, T>>> & res) const {
+			const std::list<Node * > & tok_list = header.find(token)->second;
 			for (auto & i : tok_list) {
 				Node * cur = i;
 				std::vector<std::pair<int, T>> prefix_path;
@@ -83,33 +82,35 @@ struct FPTree {
 				reverse(prefix_path.begin(), prefix_path.end());
 				if (!prefix_path.empty()) res.push_back(prefix_path);
 			}
-			return res;
 		}
-	public:
-		FPTree(int support) : root(0), SUPPORT(support) { }
-		void build(const std::vector<std::vector<T>> & logs) {
-			for (auto & i : logs) {
-				for (auto & j : i) count[j]++;
+
+		//returns true if FP tree is a linked list
+		bool isLinkedList() const {
+			Node * cur = root;
+			while (cur) {
+				if (cur->child.size() > 1) return 0;
+				cur = cur->child.empty() ? 0 : cur->child[0];
 			}
-			if (root) delete root, root = 0;
-			for (auto & i : logs) {
-				std::vector<std::pair<int, T>> log_data;
-				for (auto & j : i) {
-					if (count[j] >= SUPPORT) log_data.emplace_back(count[j], j);
+			return 1;
+		}
+		void mine(std::vector<T> & pattern, std::vector<std::vector<T>> & pattern_bin) const {
+			if (!root || root->child.empty()) return ;
+			//for maximal frequent itemset
+			if (isLinkedList()) {
+				Node * cur = root;
+				std::vector<T> p = pattern;
+				while (cur) {
+					if (count.find(cur->key)->second >= SUPPORT) p.push_back(cur->key);
+					cur = cur->child.empty() ? 0 : cur->child[0];
 				}
-				std::sort(log_data.begin(), log_data.end(), std::greater<std::pair<int, T>>());
-				insert_log(log_data);
-			}
-		}
-		
-		std::vector<std::vector<T>> mine() {
-			if (!root || root->child.empty()) {
-				return std::vector<std::vector<T>>();
+				pattern_bin.push_back(p);
+				return ;
 			}
 			std::vector<std::vector<T>> res;
 			for (auto i : count) {
 				if (i.second >= SUPPORT) {
-					auto r = build_pattern_base(i.first);
+					std::vector<std::vector<std::pair<int, T>>> r;
+					build_pattern_base(i.first, r);
 					FPTree cond_fp_tree(SUPPORT);
 					for (auto & j : r) {
 						cond_fp_tree.insert_log(j, true);
@@ -122,28 +123,42 @@ struct FPTree {
 					cond_fp_tree.traverse();
 					std::cin.get();
 #endif
-					auto ptrns = cond_fp_tree.mine();
-					ptrns.push_back(std::vector<T>());
-#ifdef DBG
-					std::cout << "patterns: conditional fp tree for " << i.first << "\n";
-#endif
-					for (auto & k : ptrns) {
-						k.push_back(i.first);
-						res.push_back(k);
-#ifdef DBG
-						for (auto j : k) std::cout << j << " ";
-						std::cout << "\n";
-#endif
-					}
-#ifdef DBG
-					std::cin.get();
-#endif
+					pattern.push_back(i.first);
+					pattern_bin.push_back(pattern);
+					cond_fp_tree.mine(pattern, pattern_bin);
+					pattern.pop_back();
 				}
 			}
-			return res;
 		}
-		void traverse() {
-			if (root) print(root, std::vector<std::pair<int, T>>());
+		void clearFPTree() {
+			count.clear();
+			header.clear();
+			if (root) delete root, root = 0;
+		}
+	public:
+		FPTree(int support) : root(0), SUPPORT(support) { }
+		void build(const std::vector<std::vector<T>> & logs) {
+			clearFPTree(); 
+			for (auto & i : logs) {
+				for (auto & j : i) count[j]++;
+			}
+			for (auto & i : logs) {
+				std::vector<std::pair<int, T>> log_data;
+				for (auto & j : i) {
+					if (count[j] >= SUPPORT) log_data.emplace_back(count[j], j);
+				}
+				std::sort(log_data.begin(), log_data.end(), std::greater<std::pair<int, T>>());
+				insert_log(log_data);
+			}
+		}
+		//returns all frequent itemsets in pattern_bin
+		void mine(std::vector<std::vector<T>> & pattern_bin) const {
+			std::vector<T> P;
+			mine(P, pattern_bin);
+		}
+		void traverse() const {
+			std::vector<std::pair<int, T>> P;
+			if (root) print(root, P);
 		}
 		~FPTree() {
 			delete root;
