@@ -1,5 +1,6 @@
 #include <iostream>
 #include "fptree.h"
+#include "cluster.h"
 
 using namespace std;
 
@@ -33,6 +34,7 @@ int main(int cnt, char * args[]) {
 	} else {
 		int s = atoi(args[2]);
 		FPTree<T> tree(s);
+		Cluster<T> data;
 		std::vector<std::vector<T>> logs = read(args[1]);
 		//consider the position of token in the line
 		tree.build(logs);
@@ -47,6 +49,10 @@ int main(int cnt, char * args[]) {
 			}
 			cout << "\n";
 		}
+		cout<<"---------------------------";
+		data.AssociateLogs(logs, r);
+		data.DisplayCluster(logs);
+		
 	}
 	return 0;
 }
