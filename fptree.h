@@ -33,7 +33,7 @@ struct FPTree {
 
 		std::vector<int> best_lines;
 		std::vector<int> log_count;
-		std::map<<std::vector<T>, std::vector<int>> logsWithPattern;
+		std::map<std::vector<T>, std::vector<int>> logsWithPattern;
 
 		//assumes that log is sorted according to the support count in descending
 		//order, support count of a token is not constrained (may be < support or >= support)
@@ -229,15 +229,15 @@ struct FPTree {
 			for(auto i = pattern_bin.begin(); i != pattern_bin.end(); ++i){
 				for(int j=0; j<(int)logs.size(); j++){
 					bool ok = 1;
-					for(auto k = i.begin().second; k != i.end().second && ok; ++k)
-						ok = std::find(logs[j].begin(), logs[j].end(), k) != logs[j].end();
+					for(auto k = i->begin(); k != i->end() && ok; ++k)
+						ok = std::find(logs[j].begin(), logs[j].end(), *k) != logs[j].end();
 					/*
 					for(auto &k : i->second){
 						if(!ok) break;
 						ok = std::find(logs[j].begin(), logs[j].end(), k) != logs[j].end();
 					}*/
 					if(ok)
-						logsWithPattern[i]->second.push_back(j);
+						logsWithPattern[*i].push_back(j);
 
 				}
 			}
