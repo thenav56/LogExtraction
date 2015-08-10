@@ -33,8 +33,9 @@ int main(int cnt, char * args[]) {
 	} else {
 		int s = atoi(args[2]);
 		FPTree<T> tree(s);
+		std::vector<std::vector<T>> logs = read(args[1]);
 		//consider the position of token in the line
-		tree.build(read(args[1]));
+		tree.build(logs);
 		std::vector<std::vector<T>> r;
 		clock_t t = clock();
 		tree.mine(r);
@@ -46,6 +47,7 @@ int main(int cnt, char * args[]) {
 			}
 			cout << "\n";
 		}
+		tree.cluster(logs, r);
 	}
 	return 0;
 }
