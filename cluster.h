@@ -6,7 +6,8 @@ template <class T>
 class Cluster{
 private:
 	std::vector<std::vector<T>> logs;
-	std::vector<int> best_lines;
+	std::vector<std::pair<int, int>> best_lines;
+
 	std::vector<int> log_count;
 	std::map<std::vector<T>, std::vector<int>> logsWithPattern;
 
@@ -51,6 +52,28 @@ public:
 				}
 			}
 		} */
+		void AssociatePatterns(std::vector<std::vector<T>> & logs, std::vector<std::vector<T>> & pattern_bin){
+			for(int j=0; j<(int)logs.size(); ++j){
+				best_lines.emplace_back(0,0);
+				for(auto i = pattern_bin.begin(); i != pattern_bin.end(); ++i){
+					bool ok =1; 
+					
+					for(auto k = i->begin(); k != i->end() && ok; ++k){
+						ok = std::find(logs[j].begin(), logs[j].end(), *k) != logs[j].end();
+					}
+					
+					if(ok && i->size() > best_lines[j].second){
+						best_lines[j].first = i - pattern_bin.begin(); //saves the line number of best pattern
+						best_lines[j].second = i->size(); //saves the size of best pattern
+					}
+				}
+			} 
+			
+			for(int i = 0; i < (int)logs.size(); ++i){
+				logsWithPattern[pattern_bin[best_lines[i].first]].push_back(i);
+			}
+			
+		}
 		void AssociateLogs(std::vector<std::vector<T>> & logs, std::vector<std::vector<T>> & pattern_bin)
 		{
 			for(auto i = pattern_bin.begin(); i != pattern_bin.end(); ++i){
@@ -58,11 +81,7 @@ public:
 					bool ok = 1;
 					for(auto k = i->begin(); k != i->end() && ok; ++k)
 						ok = std::find(logs[j].begin(), logs[j].end(), *k) != logs[j].end();
-					/*
-					for(auto &k : i->second){
-						if(!ok) break;
-						ok = std::find(logs[j].begin(), logs[j].end(), k) != logs[j].end();
-					}*/
+					
 					if(ok)
 						logsWithPattern[*i].push_back(j);
 
@@ -71,6 +90,7 @@ public:
 		}
 		void DisplayCluster(std::vector<std::vector<T>> logs){
 			for(auto i = logsWithPattern.begin(); i != logsWithPattern.end(); ++i){
+				std::cout<<"Cluster Pattern:";
 				for(auto j = i->first.begin(); j != i->first.end(); ++j){
 					std::cout<<j->second<<" ";
 				}

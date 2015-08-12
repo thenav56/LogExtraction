@@ -50,7 +50,7 @@ int main(int cnt, char * args[]) {
 			cout << "\n";
 		}
 		cout<<"---------------------------";
-		data.AssociateLogs(logs, r);
+		data.AssociatePatterns(logs, r);
 		data.DisplayCluster(logs);
 		
 	}
