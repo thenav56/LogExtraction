@@ -41,7 +41,7 @@ int main(int cnt, char * args[]) {
 		std::vector<std::vector<T>> r;
 		clock_t t = clock();
 		tree.mine(r);
-		
+		std::cout<<"Initial pattern no: "<<r.size()<<"\n";
 		data.AssociatePatterns(logs, r);
 		cout << "Time: " << double(clock() - t) / CLOCKS_PER_SEC << "\n";
 		cout << "Frequent patterns: " << r.size() << "\n";
@@ -51,9 +51,8 @@ int main(int cnt, char * args[]) {
 			}
 			cout << "\n";
 		}
-		cout<<"---------------------------";
-		std::cout<<"\n *** "<<r.size();
-		data.DisplayCluster(logs);
+		cout<<"---------------------------\n \n";
+		data.DisplayCluster(logs, r);
 		
 	}
 	return 0;

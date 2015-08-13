@@ -9,13 +9,12 @@ private:
 	std::vector<std::pair<int, int>> best_lines;
 
 	std::vector<int> log_count;
-	std::map<std::vector<T>, std::vector<int>> logsWithPattern;
+	std::map<int, std::vector<int>> logsWithPattern;
 
 public:
 	Cluster() {}
 
 	void AssociatePatterns(std::vector<std::vector<T>> & logs, std::vector<std::vector<T>> & pattern_bin){
-		std::cout<<"\n ** "<<pattern_bin.size();
 		for(int j=0; j<(int)logs.size(); ++j){
 			best_lines.emplace_back(0,0);
 			std::vector<T> new_pattern, temp_pattern;
@@ -40,26 +39,19 @@ public:
 			if(best_lines[j].second < pattern_bin[best_lines[j].first].size()){
 				pattern_bin.push_back(new_pattern);
 				best_lines[j].first = pattern_bin.end() - pattern_bin.begin() -1;
+				new_pattern.clear();
 			}
 
 		} 
 		
 		for(int i = 0; i < (int)logs.size(); ++i){
-			logsWithPattern[pattern_bin[best_lines[i].first]].push_back(i);
+			logsWithPattern[best_lines[i].first].push_back(i);
 		}
-		std::cout<<"\n ** "<<pattern_bin.size();
 	}
 
 	void DisplayCluster(std::vector<std::vector<T>> logs){
-		/*for(auto i : logsWithPattern){
-			std::cout<<"Cluster Pattern: "
-			for(auto j = pattern_bin[i].begin(); j != pattern_bin[i].end(); ++j){
-				std::cout<<j->second<<" ";
-			}
-			std::cout<<"\n";
-
-		} */
 		
+		/*
 		for(auto i = logsWithPattern.begin(); i != logsWithPattern.end(); ++i){
 			std::cout<<"Cluster Pattern:";
 			for(auto j = i->first.begin(); j != i->first.end(); ++j){
@@ -73,8 +65,31 @@ public:
 				std::cout<<"\n";
 			}
 		}
+		*/
 		
 			
+	}
+	void DisplayCluster(std::vector<std::vector<T>> logs, std::vector<std::vector<T>> & pattern_bin){
+		for(auto i : logsWithPattern){
+			std::vector<bool> column(1000,0);
+			std::cout<<"Cluster Pattern: ";
+			for(auto j = pattern_bin[i.first].begin(); j != pattern_bin[i.first].end(); ++j){
+				column[j->first] = 1;
+				//std::cout<<j->second<<" ";
+			}
+			for (auto j = logs[*i.second.begin()].begin(); j != logs[*i.second.begin()].end(); ++j) {
+				if (column[j->first]) std::cout << "[" << j->second << "]" ; else std::cout << "#";
+				std::cout << " ";
+			}
+			std::cout<<"\n";
+			for(auto j = i.second.begin(); j != i.second.end(); ++j){
+				for(auto k : logs[*j]){
+					std::cout<<k.second<<" ";
+				}
+				std::cout<<"\n";
+			}
+
+		} 
 	}
 
 };
