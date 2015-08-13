@@ -49,26 +49,6 @@ public:
 		}
 	}
 
-	void DisplayCluster(std::vector<std::vector<T>> logs){
-		
-		/*
-		for(auto i = logsWithPattern.begin(); i != logsWithPattern.end(); ++i){
-			std::cout<<"Cluster Pattern:";
-			for(auto j = i->first.begin(); j != i->first.end(); ++j){
-				std::cout<<j->second<<" ";
-			}
-			std::cout<<"\n";
-			for(auto j = i->second.begin(); j != i->second.end(); ++j){
-				for(auto k : logs[*j]){
-					std::cout<<k.second<<" ";
-				}
-				std::cout<<"\n";
-			}
-		}
-		*/
-		
-			
-	}
 	void DisplayCluster(std::vector<std::vector<T>> logs, std::vector<std::vector<T>> & pattern_bin){
 		for(auto i : logsWithPattern){
 			std::vector<bool> column(1000,0);
