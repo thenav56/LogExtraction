@@ -16,7 +16,7 @@ public:
 
 	void AssociatePatterns(std::vector<std::vector<T>> & logs, std::vector<std::vector<T>> & pattern_bin){
 		for(int j=0; j<(int)logs.size(); ++j){
-			best_lines.emplace_back(0,0);
+			best_lines.emplace_back(NULL, NULL);
 			std::vector<T> new_pattern, temp_pattern;
 			for(auto i = pattern_bin.begin(); i != pattern_bin.end(); ++i){
 				bool ok =0; 
@@ -32,19 +32,21 @@ public:
 				if(count > best_lines[j].second){
 					best_lines[j].first = i - pattern_bin.begin(); //saves the line number of best pattern
 					best_lines[j].second = count; //saves the size of best pattern
+					new_pattern.clear();
 					new_pattern = temp_pattern;
 				}
 				temp_pattern.clear();
 			}
-			if(best_lines[j].second < pattern_bin[best_lines[j].first].size()){
+			if(best_lines[j].second < pattern_bin[best_lines[j].first].size() && best_lines[j].second != 0){
 				pattern_bin.push_back(new_pattern);
 				best_lines[j].first = pattern_bin.end() - pattern_bin.begin() -1;
-				new_pattern.clear();
+				
 			}
 
 		} 
 		
 		for(int i = 0; i < (int)logs.size(); ++i){
+			if(best_lines[i].second != 0)
 			logsWithPattern[best_lines[i].first].push_back(i);
 		}
 	}
@@ -52,7 +54,7 @@ public:
 	void DisplayCluster(std::vector<std::vector<T>> logs, std::vector<std::vector<T>> & pattern_bin){
 		for(auto i : logsWithPattern){
 			std::vector<bool> column(1000,0);
-			std::cout<<"Cluster Pattern: ";
+			std::cout<<"\nCluster Pattern: ";
 			for(auto j = pattern_bin[i.first].begin(); j != pattern_bin[i.first].end(); ++j){
 				column[j->first] = 1;
 				//std::cout<<j->second<<" ";
