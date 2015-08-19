@@ -1,0 +1,16 @@
+# depslib dependency file v1.0
+1440000726 source:/mnt/B0DCB46DDCB43008/Programming/WorkPlace/Projects/Log key extraction(Minor Project)/Coding/Project-Regex/Regex_extraction/token.cpp
+	<iostream>
+	<vector>
+	<regex>
+	<string>
+	"include/regex_key_value.h"
+
+1439998539 source:/mnt/B0DCB46DDCB43008/Programming/WorkPlace/Projects/Log key extraction(Minor Project)/Coding/Project-Regex/Regex_extraction/src/regex_key_value.cpp
+	"regex_key_value.h"
+
+1439998093 /mnt/B0DCB46DDCB43008/Programming/WorkPlace/Projects/Log key extraction(Minor Project)/Coding/Project-Regex/Regex_extraction/include/regex_key_value.h
+	<iostream>
+	<map>
+	<regex>
+
