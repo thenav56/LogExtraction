@@ -31,26 +31,49 @@ public:
 
 		//calculation of transition probability
 		for(auto i=tlogs.begin(); i != tlogs.end(); ++i){
-			for(auto j=i->begin(); j!=(i->end()-1); ++j){
-				string tt = j->second + (j+1)->second;/*
-				map<string, int>::iterator it = probtt.find(tt);
+			for(auto j=i->begin(); j!=i->end(); ++j){
+				if(j == i->end()-1) break;
+				string tt = j->second + (j+1)->second;
+				
+				map<string, double>::iterator it = probtt.find(tt);
 				if(it != probtt.end()){
 					it->second += 1/tags[j->second];
 				}
 				else{
 					probtt.insert(make_pair(tt, 1/tags[j->second]));
 				}
-				*/
-				cout<<tt<<"\n";
+				
+				
 			}
 		}
 
-/*
-		for(auto i=tags.begin(); i != tags.end(); ++i){
+		//calculation of emission probability
+		for(auto i=tlogs.begin(); i != tlogs.end(); ++i){
+			for(auto j=i->begin(); j != i->end(); ++j){
+				for(auto k = tags.begin(); k != tags.end(); ++k){
+					string wt = j->first + k->first;
+
+					map<string, double>::iterator it = probwt.find(wt);
+					if(it != probwt.end()){
+						if(j->second.compare(k->first) == 0)
+							it->second += 1;
+					}
+					else{
+						if(j->second.compare(k->first) == 0)
+							probwt.insert(make_pair(wt,1));
+						else
+							probwt.insert(make_pair(wt,0));
+					}
+				}
+			}
+		}
+
+
+		for(auto i=probwt.begin(); i != probwt.end(); ++i){
 			cout<<i->first<"\t";
 			cout<<i->second<<"\n";
 		}
-*/
+
 	}
 
 };

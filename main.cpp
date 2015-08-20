@@ -5,14 +5,15 @@
 
 using namespace std;
 
-typedef pair<int, string> T;
+typedef pair<string, string> T;
 
 vector<T> tokenize(string s) {
 	istringstream is(s);
 	vector<T> res;
-	string t;
+	string t, t1;
 	for (int i = 0; is >> t; ++i) {
-		res.emplace_back(i, t);
+		is >> t1;
+		res.emplace_back(t, t1);
 	}
 	return res;
 }
@@ -39,5 +40,6 @@ int main(int cnt, char * args[])
 		vector<vector<T>> logs = read(args[2]);
 		HMM<T> hmm;
 		hmm.Train(Tfile);
+		
 	}
 }
