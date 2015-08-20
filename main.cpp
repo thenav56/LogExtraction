@@ -34,8 +34,7 @@ int main(int cnt, char * args[])
 	if(cnt<3){
 		cout<<"Hidden Markov Model Implementation\n";
 		cout<<"Usage: Program-name training-file tagging-file\n";
-	}
-	else{
+	} else{
 		vector<vector<T>> Tfile = read(args[1]);
 		vector<vector<T>> logs = read(args[2]);
 		HMM<T> hmm;
