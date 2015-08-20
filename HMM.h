@@ -9,15 +9,34 @@
 
 using namespace std;
 
+typedef pair<string, string> V;
+
 template<class T>
 class HMM{
 private:
+	vector<vector<V>> tlogs;
 	map<string, int> tags;
 	map<string, double> probtt, probwt;
+	map<map<int, string>, double> best_score;
+	map<map<int, string>, map<int, string>> best_edge;
 	
 public:
 	HMM() {}
-	void Train(vector<vector<T>> & tlogs){
+	void Train(vector<vector<T>> & lfile, vector<vector<T>> & tfile){
+		//Associate tags with logs
+		{
+			auto i=lfile.begin(); auto j=tfile.begin(); 
+			for(;i!=lfile.end(); ++i, ++j){
+				vector<V> temp;
+				auto k=i->begin(); auto l=j->begin();
+				for(;k!=i->end(); ++k, ++l){
+					temp.emplace_back(k->second,l->second);
+				}
+				tlogs.push_back(temp);
+			} 
+		}
+		
+		//identification of tags and thier count
 		for(auto i=tlogs.begin(); i != tlogs.end(); ++i){
 			for(auto j= i->begin(); j != i->end(); ++j){
 				map<string, int>::iterator it = tags.find(j->second);
@@ -56,11 +75,11 @@ public:
 					map<string, double>::iterator it = probwt.find(wt);
 					if(it != probwt.end()){
 						if(j->second.compare(k->first) == 0)
-							it->second += 1;
+							it->second += 1/tags[j->second];
 					}
 					else{
 						if(j->second.compare(k->first) == 0)
-							probwt.insert(make_pair(wt,1));
+							probwt.insert(make_pair(wt,1/tags[j->second]));
 						else
 							probwt.insert(make_pair(wt,0));
 					}
@@ -73,6 +92,10 @@ public:
 			cout<<i->first<"\t";
 			cout<<i->second<<"\n";
 		}
+
+	}
+
+	void ForwardViterbi(vector<vector<T>> & logs){
 
 	}
 

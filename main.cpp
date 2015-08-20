@@ -5,15 +5,14 @@
 
 using namespace std;
 
-typedef pair<string, string> T;
+typedef pair<int, string> T;
 
 vector<T> tokenize(string s) {
 	istringstream is(s);
 	vector<T> res;
-	string t, t1;
+	string t;
 	for (int i = 0; is >> t; ++i) {
-		is >> t1;
-		res.emplace_back(t, t1);
+		res.emplace_back(i, t);
 	}
 	return res;
 }
@@ -31,14 +30,15 @@ read(const char * file_name) {
 
 int main(int cnt, char * args[])
 {
-	if(cnt<3){
+	if(cnt<4){
 		cout<<"Hidden Markov Model Implementation\n";
 		cout<<"Usage: Program-name training-file tagging-file\n";
 	} else{
-		vector<vector<T>> Tfile = read(args[1]);
-		vector<vector<T>> logs = read(args[2]);
+		vector<vector<T>> lfile = read(args[1]);
+		vector<vector<T>> tfile = read(args[2]);
+		vector<vector<T>> logs = read(args[3]);
 		HMM<T> hmm;
-		hmm.Train(Tfile);
+		hmm.Train(lfile, tfile);
 		
 	}
 }
