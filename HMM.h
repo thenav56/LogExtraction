@@ -28,29 +28,24 @@ public:
 				}
 			}
 		}
-
 		//calculation of transition probability
 		for(auto i=tlogs.begin(); i != tlogs.end(); ++i){
-			for(auto j=i->begin(); j!=(i->end()-1); ++j){
-				string tt = j->second + (j+1)->second;/*
-				map<string, int>::iterator it = probtt.find(tt);
+			for (int j = 0; j + 1 < i->size(); ++j) {
+				string tt = (*i)[j].second + (*i)[j + 1].second;
+				map<string, double>::iterator it = probtt.find(tt);
 				if(it != probtt.end()){
-					it->second += 1/tags[j->second];
+					it->second += 1/tags[(*i)[j].second];
 				}
 				else{
-					probtt.insert(make_pair(tt, 1/tags[j->second]));
+					probtt.insert(make_pair(tt, 1/tags[(*i)[j].second]));
 				}
-				*/
 				cout<<tt<<"\n";
 			}
 		}
-
-/*
 		for(auto i=tags.begin(); i != tags.end(); ++i){
 			cout<<i->first<"\t";
 			cout<<i->second<<"\n";
 		}
-*/
 	}
 
 };
