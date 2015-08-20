@@ -11,13 +11,13 @@ typedef std::map<int,regexPair> regexMap ;
 
 class regex_key_value
 {
-    public:
-        void add(std::string ty , std::string rx) ;
-        std::string getRegex(int key) ;
-        std::string gettype(int key) ;
-        std::pair<int,std::string> doRegex(std::string token) ;
-    private:
-        regexMap regMap ;
+	public:
+		void add(std::string ty , std::string rx) ;
+		std::string getRegex(int key) ;
+		std::string gettype(int key) ;
+		std::pair<int,std::string> doRegex(std::string token) ;
+	private:
+		regexMap regMap ;
 
 };
 
