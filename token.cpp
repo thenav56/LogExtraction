@@ -20,7 +20,7 @@ int main(){
     ourRegex.add("time","(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])") ;
     ourRegex.add("file","(http|ftp|http\://|/)[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\\S*)") ;
 
-    string word = "cleveland.directrouter.com 192.168.0.1 - - [ 2007-03-14 23:57:05 -0800] \"GET /fotos/lenew.jpg HTTP/1.0\" 200 1241 \"-\" \"-\"" ;
+    string word = "cleveland.directrouter.com 192.168.0.1 - - [2007-03-14 23:57:05 -0800] \"GET /fotos/lenew.jpg HTTP/1.0\" 200 1241 \"-\" \"-\"" ;
 
     word = remove_extra_space(word) ;
     //cout<<word<<"\n" ;
