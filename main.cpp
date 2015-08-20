@@ -1,6 +1,6 @@
 #include <iostream>
-#include "fptree.h"
-#include "cluster.h"
+#include "include/fptree.h"
+#include "include/cluster.h"
 
 using namespace std;
 
