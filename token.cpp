@@ -11,6 +11,7 @@ regex_key_value ourRegex ;
 
 string remove_extra_space(std::string word) ;
 string key_value_extrac(std::string word)  ;
+string key_value_extrac_search(std::string word) ;
 
 int main(){
 
@@ -22,7 +23,7 @@ int main(){
 
     ourRegex.readFromFile("regex.txt") ;
 
-    string word = "cleveland.directrouter.com 192.168.0.1 - - [2007-03-14 23:57:05 -0800] \" GET /fotos/lenew.jpg HTTP/1.0\" 200 1241 \"-\" \"-\"" ;
+    string word = "cleveland.directrouter.com 192.168.0.1 - - [2007-03-14 23:57:05 -0800] \"GET /fotos/lenew.jpg HTTP/1.0\" 200 1241 \"-\" \"-\"" ;
 
     word = remove_extra_space(word) ;
     //cout<<word<<"\n" ;
@@ -37,8 +38,16 @@ int main(){
         }
         temp += word[i] ;
     }
+cout<<"---------------USING-REGEX-MATCH-----------------------------------------------\n\n" ;
     for(int unsigned i = 0 ; i < vec_string.size() ; i++){
         cout<<key_value_extrac(vec_string[i])<<"\n" ;
+        cout<<"---------------------------------------------\n" ;
+    }
+
+cout<<"\n\n---------------USING-REGEX-SEARCH-----------------------------------------------\n\n" ;
+
+    for(int unsigned i = 0 ; i < vec_string.size() ; i++){
+        cout<<key_value_extrac_search(vec_string[i])<<"\n" ;
         cout<<"---------------------------------------------\n" ;
     }
 
@@ -84,4 +93,11 @@ string key_value_extrac(std::string word){
     std::pair<int,std::string> result = ourRegex.doRegex(word) ;
 
     return string(std::get<1>(result)+"( "+ std::to_string(std::get<0>(result)) +" )" + " :: " + word ) ;
+}
+
+string key_value_extrac_search(std::string word){
+    std::smatch string_matches ;
+    std::pair<int,std::string> result = ourRegex.doRegex_search(word,string_matches ) ;
+
+    return string(std::get<1>(result)+"( "+ std::to_string(std::get<0>(result)) +" )" + " :: " + string_matches.str() ) ;
 }

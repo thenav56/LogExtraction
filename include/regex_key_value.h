@@ -19,6 +19,7 @@ class regex_key_value
         std::string getRegex(int key) ;
         std::string gettype(int key) ;
         std::pair<int,std::string> doRegex(std::string token) ;
+        std::pair<int,std::string> doRegex_search(std::string token,std::smatch &string_matches) ;
         std::string remove_extra_space(std::string word);
         std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) ;
         std::vector<std::string> split(const std::string &s, char delim) ;

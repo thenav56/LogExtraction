@@ -24,6 +24,15 @@ std::pair<int,std::string> regex_key_value::doRegex(std::string token){
             return std::make_pair(-1,"Unknown") ;
         }
 
+std::pair<int,std::string> regex_key_value::doRegex_search(std::string token,std::smatch &string_matches){
+            for(regexMap_itr itr = regMap.begin() ; itr != regMap.end() ; itr++ ){
+                if(std::regex_search(token, string_matches , std::regex(std::get<1>(itr->second)  ))){
+                    return std::make_pair(itr->first, std::get<0>(itr->second) ) ;
+                }
+            }
+            return std::make_pair(-1,"Unknown") ;
+    }
+
 void regex_key_value::readFromFile(std::string filename){
             std::ifstream infile ;
             std::string data ;
