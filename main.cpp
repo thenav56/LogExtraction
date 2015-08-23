@@ -34,11 +34,14 @@ int main(int cnt, char * args[])
 		cout<<"Hidden Markov Model Implementation\n";
 		cout<<"Usage: Program-name training-file tagging-file\n";
 	} else{
-		vector<vector<T>> lfile = read(args[1]);
+		vector<vector<T>> ufile = read(args[1]);
 		vector<vector<T>> tfile = read(args[2]);
 		vector<vector<T>> logs = read(args[3]);
 		HMM<T> hmm;
-		hmm.Train(lfile, tfile);
+		
+		hmm.Train(ufile, tfile);
+		
+		hmm.TagLogs(logs);
 		
 	}
 }

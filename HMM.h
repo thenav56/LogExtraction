@@ -17,7 +17,7 @@ private:
 	vector<vector<V>> tlogs;
 	map<string, int> tags;
 	map<string, double> probtt, probwt;
-	map<map<int, string>, double> best_score;
+	vector<pair<string, double>> best_score;
 	map<map<int, string>, map<int, string>> best_edge;
 	
 public:
@@ -56,10 +56,10 @@ public:
 				
 				map<string, double>::iterator it = probtt.find(tt);
 				if(it != probtt.end()){
-					it->second += 1/tags[j->second];
+					it->second += 1.0/tags[j->second];
 				}
 				else{
-					probtt.insert(make_pair(tt, 1/tags[j->second]));
+					probtt.insert(make_pair(tt, 1.0/tags[j->second]));
 				}
 				
 				
@@ -75,28 +75,70 @@ public:
 					map<string, double>::iterator it = probwt.find(wt);
 					if(it != probwt.end()){
 						if(j->second.compare(k->first) == 0)
-							it->second += 1/tags[j->second];
+							it->second += 1.0/tags[j->second];
 					}
 					else{
 						if(j->second.compare(k->first) == 0)
-							probwt.insert(make_pair(wt,1/tags[j->second]));
+							probwt.insert(make_pair(wt,1.0/tags[j->second]));
 						else
 							probwt.insert(make_pair(wt,0));
 					}
 				}
 			}
 		}
-
-
+		/*
+		for(auto i=probtt.begin(); i != probtt.end(); ++i){
+			cout<<i->first<"\t";
+			cout<<i->second<<"\n";
+		}
 		for(auto i=probwt.begin(); i != probwt.end(); ++i){
 			cout<<i->first<"\t";
 			cout<<i->second<<"\n";
 		}
-
+		*/
 	}
 
-	void ForwardViterbi(vector<vector<T>> & logs){
+	void ForwardViterbi(vector<T> & logs){
+		
+		//map<pair<int,string>, double>::iterator it = best_score.begin();
+		for(auto i=logs.begin(); i!=logs.end(); ++i){
+			best_score.push_back(make_pair("",0.0));
+			if(i->first == 0){
+				for(auto j = tags.begin(); j != tags.end(); ++j){
+					for(auto k = tags.begin(); k != tags.end(); ++k){
+						double score = 2*probwt[i->second+j->first] + probtt[j->first + k->first] + 2*probwt[(i+1)->second + k->first];
+						//cout<<probwt[i->second+j->first]<<":"<<probtt[j->first + k->first]<<":"<<probwt[(i+1)->second + k->first]<<"\n";
+						if(best_score[i->first].second < score){
+							best_score[i->first].first = j->first;
+							best_score[i->first].second = score;
+						}
+					}
+				}
+				continue;
+			}
+			for(auto j = tags.begin(); j != tags.end(); ++j){
+				double score = best_score[i->first -1].second + probtt[best_score[i->first -1].first + j->first]
+				+ probwt[i->second+j->first];
+				if(best_score[i->first].second < score){
+					best_score[i->first].first = j->first;
+					best_score[i->first].second = score;
+				}
 
+			}
+		}
+		auto k=logs.begin();
+		for(auto i=best_score.begin(); i != best_score.end(); ++i, ++k){
+			cout<<i->first<<": ";
+			cout<<k->second<<"\t";
+		}
+		cout<<"\n";
+
+		best_score.clear();
+	}
+
+	void TagLogs(vector<vector<T>> & logs){
+		for(auto i=logs.begin(); i!=logs.end(); ++i)
+			ForwardViterbi(*i);
 	}
 
 };
