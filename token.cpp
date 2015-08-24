@@ -12,39 +12,25 @@ regex_key_value ourRegex ;
 string remove_extra_space(std::string word) ;
 string key_value_extrac(std::string word)  ;
 string key_value_extrac_search(std::string word) ;
+bool is_outerbound(char bound) ;
+bool checkRelation(char x , char y ) ;
+vector<std::string> tokenize(string word) ;
+
 
 int main(){
-
-//    ourRegex.add("ip_address" , "([0-9]+)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)(::([0-9]+)|)") ;
-//    ourRegex.add("date","(199[0-9]|200[0-9])-([1-9]|0[1-9]|1[012])-([1-9]|[0-2][1-9]|3[01])") ;
-//    ourRegex.add("url","([a-zA-Z]+)\\.([a-zA-Z]+)\\.([a-zA-Z]+)") ;
-//    ourRegex.add("time","(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])") ;
-//    ourRegex.add("file","((https|http|ftp|http)\://|/)[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(/\\S*)") ;
-
     ourRegex.readFromFile("regex.txt") ;
 
-    string word = "cleveland.directrouter.com 192.168.0.1 - - [2007-03-14 23:57:05 -0800] \"GET /fotos/lenew.jpg HTTP/1.0\" 200 1241 \"-\" \"-\"" ;
+    string word = "cleveland.directrouter.com 192.168.0.1 - - [2007-Oct-14 23:57:05 -0800] \"GET /fotos/lenew.jpg HTTP/1.0\" 200 1241 \"-\" \"-\"" ;
 
-    word = remove_extra_space(word) ;
-    //cout<<word<<"\n" ;
-    vector<std::string> vec_string ;
-    string temp  ;
-   // int quotation_flag ;
-    for(int unsigned i= 0 ; i < word.size() ; i++){
-        if(word[i] == ' '){
-            vec_string.push_back(temp) ;
-            temp.clear() ;
-            continue ;
-        }
-        temp += word[i] ;
-    }
-cout<<"---------------USING-REGEX-MATCH-----------------------------------------------\n\n" ;
+    vector<std::string> vec_string = tokenize(word) ;
+
+    cout<<"---------------USING-REGEX-MATCH-----------------------------------------------\n\n" ;
     for(int unsigned i = 0 ; i < vec_string.size() ; i++){
         cout<<key_value_extrac(vec_string[i])<<"\n" ;
         cout<<"---------------------------------------------\n" ;
     }
 
-cout<<"\n\n---------------USING-REGEX-SEARCH-----------------------------------------------\n\n" ;
+    cout<<"\n\n---------------USING-REGEX-SEARCH-----------------------------------------------\n\n" ;
 
     for(int unsigned i = 0 ; i < vec_string.size() ; i++){
         cout<<key_value_extrac_search(vec_string[i])<<"\n" ;
@@ -53,6 +39,19 @@ cout<<"\n\n---------------USING-REGEX-SEARCH------------------------------------
 
     return 0 ;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 string remove_extra_space(std::string word){
@@ -101,3 +100,80 @@ string key_value_extrac_search(std::string word){
 
     return string(std::get<1>(result)+"( "+ std::to_string(std::get<0>(result)) +" )" + " :: " + string_matches.str() ) ;
 }
+
+vector<std::string> tokenize(string word){
+    word = remove_extra_space(word) ;
+    //cout<<word<<"\n" ;
+    vector<std::string> vec_string ;
+    string temp  ;
+    vector<char> bound_stack ;
+    bool bound = false ;
+
+    for(int unsigned i= 0 ; i < word.size() ; i++){
+        if(word[i] ==  '[' || word[i] ==  '{' || word[i] ==  '\"' || word[i] ==  '\'' ){
+            if((word[i] == '\"' || word[i] == '\'') && word[i] == bound_stack[bound_stack.size()-1]){
+                bound = false ;
+                bound_stack.pop_back() ;
+            }else{
+                bound = true  ;
+                bound_stack.push_back(word[i]) ;
+                }
+        }else if(word[i] == ']' || word[i] ==  '}' || word[i] ==  '\"' || word[i] ==  '\''){
+            bool bool_t = false ;
+            if(word[i] == ']' && bound_stack[bound_stack.size()-1] == '[' ){
+                bool_t = true ;
+            }else if(word[i] == '}' && bound_stack[bound_stack.size()-1] == '{' ){
+                bool_t = true ;
+            }else if(word[i] == bound_stack[bound_stack.size()-1]){
+                bool_t = true ;
+            }
+
+            if(bool_t){
+                bound = false ;
+                bound_stack.pop_back() ;
+            }
+        }
+        if( !bound && (word[i] == ' ' || (i == word.size()-1))){
+            vec_string.push_back(temp) ;
+            temp.clear() ;
+            continue ;
+        }
+        temp += word[i] ;
+    }
+    cout<<temp<<"\n" ;
+    bound_stack.empty() ;
+    for(int unsigned i = 0 ;  i < vec_string.size() ; i++){
+            if(is_outerbound(vec_string[i][0])){
+                bound_stack.push_back(vec_string[i][0]) ;
+                vec_string[i].erase(0,1) ;
+                i-- ;
+            }else if(is_outerbound(vec_string[i][vec_string[i].size() - 1 ])){
+                if(checkRelation(bound_stack[bound_stack.size() - 1] , vec_string[i][vec_string[i].size() - 1 ] ) ){
+                        bound_stack.pop_back() ;
+                        vec_string[i].erase(vec_string[i].size() - 1 )  ;
+                }
+            }
+
+    }
+    return vec_string   ;
+}
+
+
+bool is_outerbound(char bound){
+    if(bound == '\'' || bound == '"' || bound == '[' || bound == ']' || bound == '{' || bound == '}')
+        return true ;
+    return false ;
+}
+
+bool checkRelation(char x , char y ){
+    if(x == '[' && y == ']')
+        return true ;
+    if(x == '\'' && y == '\'')
+        return true ;
+    if(x == '"' && y == '"')
+        return true ;
+    if(x == '{' && y == '}')
+        return true ;
+    return false ;
+}
+

@@ -41,6 +41,8 @@ void regex_key_value::readFromFile(std::string filename){
             while(1){
             if(std::getline(infile,data)){
                     data = remove_extra_space(data) ;
+                    if(data[0] == ';')
+                        continue ;
                     dataVec = split(data,' ') ;
                     add(dataVec[0],dataVec[1]) ;
                     dataVec.empty() ;
