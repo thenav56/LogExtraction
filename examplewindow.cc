@@ -8,7 +8,7 @@ m_frame("Data from file :"),m_Alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER, 1.0, 
  set_title("Key Value Extraction");
  set_default_size(800, 600);
  set_position(Gtk::WIN_POS_CENTER);
- add(m_Box); 
+ add(m_Box);
  // put a MenuBar at the top of the box and other stuff below it.
  //Create actions for menus and toolbars:
  m_refActionGroup = Gtk::ActionGroup::create();
@@ -35,7 +35,7 @@ m_frame("Data from file :"),m_Alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER, 1.0, 
 
  m_refActionGroup->add(Gtk::Action::create("FileSave",
   Gtk::Stock::SAVE, "_Save", "Save File"),
- sigc::mem_fun(*this, &ExampleWindow::on_menu_others)); 
+ sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
  m_refActionGroup->add(Gtk::Action::create("FilePageSetup", Gtk::Stock::PRINT,"Page Setup"),
  sigc::mem_fun(*this, &ExampleWindow::on_menu_file_quit));
  m_refActionGroup->add(Gtk::Action::create("FilePrintPreview", Gtk::Stock::PRINT, "Print Preview"),
@@ -127,7 +127,7 @@ m_frame("Data from file :"),m_Alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER, 1.0, 
  if(pToolbar)
  m_Box.pack_start(*pToolbar, Gtk::PACK_SHRINK);
 show_all_children();
-//add the grid for the treeview and button 
+//add the grid for the treeview and button
 //Add the Notebook, with the button underneath:
 m_Notebook.set_border_width(10);
 m_Box.pack_start(m_Notebook);
@@ -158,7 +158,7 @@ Gtk::TreeView *treeview = Gtk::manage(new Gtk::TreeView);
     treeview->append_column("S.N", columns.col_cnt);
     treeview->append_column("Datatype", columns.col_text);
     treeview->append_column("Regex Data", columns.col_text2);
-    
+
     label = Gtk::manage(new Gtk::Label);
     label2 = Gtk::manage(new Gtk::Label);
     label->set_markup("<b><span color='black'>Enter Datatype: </span></b>");
@@ -179,7 +179,7 @@ Gtk::TreeView *treeview = Gtk::manage(new Gtk::TreeView);
     b_output->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
     m_grid.attach(*b_output, 2, 10, 1, 1);
 
-  
+
 m_grid.show_all();
 
 
@@ -191,7 +191,7 @@ m_grid2.set_border_width(20);
 m_grid2.set_row_spacing(5);
 m_Box.add(m_grid2);
 
-    
+
     label3 = Gtk::manage(new Gtk::Label);
     label3->set_markup("<b><span color='black'>Open a text file: </span></b>");
     m_grid2.attach(*label3, 0, 1, 1, 1);
@@ -210,13 +210,18 @@ m_Box.add(m_grid2);
     m_HBox.pack_start(m_VBox);
     //m_frame.add(m_Label_Normal);
     m_grid2.attach(m_frame, 0,5,200,100);
-    label4 = Gtk::manage(new Gtk::Label);
-    label4->set_markup("<b><span color='black'>The data from text file will appear here. </span></b>");
+    //label4 = Gtk::manage(new Gtk::Label);
+    //label4->set_markup("<b><span color='black'>The data from text file will appear here. </span></b>");
     //m_Entry.set_text("The data from text file");
     //m_Entry.set_text(m_Entry.get_text() + " will appear here.");
     //m_Entry.select_region(0, m_Entry.get_text_length());
     //m_grid2.attach(m_Entry, 10, 10, 100, 10);
-    m_frame.add(*label4);
+    //m_frame.add(*label4);
+    editor = Gtk::manage(new Gtk::TextView) ;
+    editor_buffer = Gtk::TextBuffer::create() ;
+    editor->set_buffer(editor_buffer) ;
+    editor->set_cursor_visible(true) ;
+    m_frame.add(*editor) ;
     m_frame.set_hexpand(true);
     m_frame.set_vexpand(true);
     Gtk::Button *m_Button = Gtk::manage(new Gtk::Button("Output"));
@@ -230,11 +235,11 @@ m_Box.add(m_grid2);
     m_HBox.show_all();
 
 
-  
+
 m_grid2.show_all();
 
 
-show_all_children(); 
+show_all_children();
 }
 
 
@@ -317,6 +322,15 @@ void ExampleWindow::on_menu_folder_open()
  //Notice that this is a std::string, not a Glib::ustring.
  std::string filename = dialog.get_filename();
  std::cout << "File selected: " << filename << std::endl;
+ std::ifstream file_load(filename.c_str());
+ if(file_load.is_open()){
+   std::string _temp ;
+    Glib::ustring file_text = "" ;
+   while(std::getline(file_load,_temp)){
+     file_text += _temp+'\n' ;
+   }
+   editor_buffer->set_text(file_text) ;
+ }
  break;
  }
  case(Gtk::RESPONSE_CANCEL):
@@ -343,7 +357,7 @@ void ExampleWindow::on_menu_others()
 
 void ExampleWindow::on_button_add_data_click()
 {
-    
+
     if(text->get_text_length() == 0 or text2->get_text_length() == 0)
         dialog("ERROR:: Enter valid data");
         else

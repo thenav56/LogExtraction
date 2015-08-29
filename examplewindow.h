@@ -1,6 +1,8 @@
 #ifndef GTKMM_ExampleWindow_H
 #define GTKMM_ExampleWindow_H
 #include <gtkmm.h>
+#include <gtk/gtk.h>
+#include <fstream>
 class ExampleWindow : public Gtk::Window
 {
 public:
@@ -8,6 +10,8 @@ public:
  virtual ~ExampleWindow();
  Gtk::TreeView *treeview;
  Gtk::Label *label,*label2, *label3, *label4,m_Label_Normal;
+ Gtk::TextView *editor ;
+ Glib::RefPtr<Gtk::TextBuffer> editor_buffer ;
  Gtk::Entry m_Entry,*text,*text2,*text3, get_text;
  Gtk::Grid m_grid,m_grid2;
  Gtk::Frame m_frame;
@@ -64,7 +68,7 @@ class ModelColumns : public Gtk::TreeModel::ColumnRecord
  Glib::RefPtr<Gtk::TextBuffer> m_refTextBuffer;
  unsigned m_ContextId;
  Gtk::Statusbar m_Statusbar;
- 
+
  //Child widgets:
  Gtk::Menu m_Menu_Popup;
  Gtk::Notebook m_Notebook;
