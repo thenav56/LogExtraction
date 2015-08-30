@@ -12,6 +12,7 @@ public:
  Gtk::Label *label,*label2, *label3, *label4,m_Label_Normal;
  Gtk::TextView *editor ;
  Glib::RefPtr<Gtk::TextBuffer> editor_buffer ;
+ Gtk::ScrolledWindow editor_ScrolledWindow;
  Gtk::Entry m_Entry,*text,*text2,*text3, get_text;
  Gtk::Grid m_grid,m_grid2;
  Gtk::Frame m_frame;

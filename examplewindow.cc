@@ -1,3 +1,7 @@
+/*
+ g++ main.cc examplewindow.cc -o main `pkg-config --libs --cflags gtkmm-3.0`
+*/
+
 #include "examplewindow.h"
 #include <gtkmm/stock.h>
 #include <iostream>
@@ -221,7 +225,10 @@ m_Box.add(m_grid2);
     editor_buffer = Gtk::TextBuffer::create() ;
     editor->set_buffer(editor_buffer) ;
     editor->set_cursor_visible(true) ;
-    m_frame.add(*editor) ;
+    editor_ScrolledWindow.add(*editor)  ;
+    //Only show the scrollbars when they are necessary:
+    editor_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    m_frame.add(editor_ScrolledWindow) ;
     m_frame.set_hexpand(true);
     m_frame.set_vexpand(true);
     Gtk::Button *m_Button = Gtk::manage(new Gtk::Button("Output"));
