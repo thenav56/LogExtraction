@@ -3,7 +3,7 @@
 #include <regex>
 #include <boost/regex.hpp>
 
-namespace std_boost = boost ; 
+namespace std_boost = std ; 
 
 typedef std::pair<std::string, std::string> regexPair  ;
 typedef std::map<int,regexPair>::iterator regexMap_itr ;
