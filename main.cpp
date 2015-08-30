@@ -65,11 +65,11 @@ int main(int cnt, char * args[])
 		vector<vector<T>> logs = read(args[3]);
 		vector<vector<T>> transformed = transformLogs(logs);
 		HMM<T> hmm;
-		for (auto & i : transformed) {
-			for (auto & j : i) {
-				cout<<j.first<<"\t"<<j.second<<"\n";
+		/*for (auto i = transformed.begin(); i != transformed.end(); ++i) {
+			for (auto j = i->begin(); j != i->end(); ++j) {
+				cout<<j->first<<"\t"<<j->second<<"\n";
 			}
-		}
+		}*/
 		hmm.Train(ufile, tfile);
 
 		hmm.TagLogs(logs);

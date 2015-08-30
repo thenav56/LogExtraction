@@ -17,7 +17,7 @@ private:
 	vector<vector<V>> tlogs;
 	map<string, int> tags;
 	map<string, double> probtt, probwt;
-	vector<pair<string, double>> best_score;
+	vector<pair<string, double>> best_score, key;
 	map<map<int, string>, map<int, string>> best_edge;
 	
 public:
@@ -100,9 +100,26 @@ public:
 
 	void ForwardViterbi(vector<T> & logs){
 		
+		//From REgex
+		for(auto i=logs.begin(); i!=logs.end(); ++i){
+			if(i->first == 0){
+				key.push_back(make_pair("ip", 1));
+			}
+			else if(i->first == 3){
+				key.push_back(make_pair("time", 1));
+			}
+			else 
+				key.push_back(make_pair("", -1));
+		}
 		//map<pair<int,string>, double>::iterator it = best_score.begin();
 		for(auto i=logs.begin(); i!=logs.end(); ++i){
 			best_score.push_back(make_pair("",0.0));
+			if(key[i->first].second != -1){
+				best_score[i->first].first = key[i->first].first;
+				best_score[i->first].second = best_score[i->first -1].second;
+				continue;
+
+			}
 			if(i->first == 0){
 				for(auto j = tags.begin(); j != tags.end(); ++j){
 					for(auto k = tags.begin(); k != tags.end(); ++k){
@@ -132,13 +149,15 @@ public:
 			cout<<k->second<<"\t";
 		}
 		cout<<"\n";
-
+		cout<<"\n";
 		best_score.clear();
+		key.clear();
 	}
 
 	void TagLogs(vector<vector<T>> & logs){
 		for(auto i=logs.begin(); i!=logs.end(); ++i)
 			ForwardViterbi(*i);
+		
 	}
 
 };
