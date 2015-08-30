@@ -154,7 +154,10 @@ m_Box.add(m_grid);
 Gtk::TreeView *treeview = Gtk::manage(new Gtk::TreeView);
     treeview->set_hexpand(true);
     treeview->set_vexpand(true);
-    m_grid.attach(*treeview, 0, 0, 3, 1);
+    treeview_ScrolledWindow.add(*treeview)  ;
+    //Only show the scrollbars when they are necessary:
+    treeview_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    m_grid.attach(treeview_ScrolledWindow, 0, 0, 3, 1);
 
     refTreeModel = Gtk::ListStore::create(columns);
 
@@ -331,7 +334,7 @@ void ExampleWindow::on_menu_folder_open()
  std::cout << "File selected: " << filename << std::endl;
  std::ifstream file_load(filename.c_str());
  if(file_load.is_open()){
-   std::string _temp ;
+    std::string _temp ;
     Glib::ustring file_text = "" ;
    while(std::getline(file_load,_temp)){
      file_text += _temp+'\n' ;

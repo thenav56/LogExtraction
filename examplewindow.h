@@ -3,16 +3,26 @@
 #include <gtkmm.h>
 #include <gtk/gtk.h>
 #include <fstream>
+#include "regex_key_value.h"
 class ExampleWindow : public Gtk::Window
 {
 public:
- ExampleWindow();
+ ExampleWindow(regex_key_value reg = NULL){
+   if(reg){
+     Gtk::TreeModel::Row row = *(refTreeModel->append());
+     int rowcount = 1 ;
+     //for()
+     row[columns.col_cnt] = rowcount;
+     row[columns.col_text] = text->get_text();
+     row[columns.col_text2] = text2->get_text();
+  }
+ };
  virtual ~ExampleWindow();
  Gtk::TreeView *treeview;
  Gtk::Label *label,*label2, *label3, *label4,m_Label_Normal;
  Gtk::TextView *editor ;
  Glib::RefPtr<Gtk::TextBuffer> editor_buffer ;
- Gtk::ScrolledWindow editor_ScrolledWindow;
+ Gtk::ScrolledWindow editor_ScrolledWindow , treeview_ScrolledWindow;
  Gtk::Entry m_Entry,*text,*text2,*text3, get_text;
  Gtk::Grid m_grid,m_grid2;
  Gtk::Frame m_frame;
