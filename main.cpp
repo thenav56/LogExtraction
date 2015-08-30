@@ -18,7 +18,7 @@ vector<T> tokenize(string s) {
 	return res;
 }
 
-vector<vector<T>> 
+vector<vector<T>>
 read(const char * file_name) {
 	ifstream file(file_name);
 	string s;
@@ -38,7 +38,7 @@ void loadRegexTemplate(const string & file) {
 	}
 }
 vector<vector<T>> transformLogs(vector<vector<T>> & logs) {
-	loadRegexTemplate("regex.tl");
+	reg.readFromFile("regex.tl");
 	vector<vector<T>> res;
 	for (auto & i : logs) {
 		res.push_back(vector<T>());
@@ -71,8 +71,8 @@ int main(int cnt, char * args[])
 			}
 		}
 		hmm.Train(ufile, tfile);
-		
+
 		hmm.TagLogs(logs);
-		
+
 	}
 }
