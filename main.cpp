@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include "HMM.h"
-#include "regex_key_value.h"
+//#include "regex_key_value.h"
 
 using namespace std;
 
@@ -13,6 +13,10 @@ vector<T> tokenize(string s) {
 	vector<T> res;
 	string t;
 	for (int i = 0; is >> t; ++i) {
+		if(!t.compare(0,1,"["))
+                t.erase(t.begin());
+        if(!t.compare(t.length()-1, 1, "]"))
+                t.erase(t.end()-1);
 		res.emplace_back(i, t);
 	}
 	return res;
@@ -38,7 +42,7 @@ void loadRegexTemplate(const string & file) {
 	}
 }
 vector<vector<T>> transformLogs(vector<vector<T>> & logs) {
-	reg.readFromFile("regex.tl");
+	
 	vector<vector<T>> res;
 	for (auto & i : logs) {
 		res.push_back(vector<T>());
@@ -60,6 +64,7 @@ int main(int cnt, char * args[])
 		cout<<"Hidden Markov Model Implementation\n";
 		cout<<"Usage: Program-name training-file tagging-file\n";
 	} else{
+		reg.readFromFile("regex.tl");
 		vector<vector<T>> ufile = read(args[1]);
 		vector<vector<T>> tfile = read(args[2]);
 		vector<vector<T>> logs = read(args[3]);
@@ -72,7 +77,7 @@ int main(int cnt, char * args[])
 		}*/
 		hmm.Train(ufile, tfile);
 
-		hmm.TagLogs(logs);
+		hmm.TagLogs(logs, reg);
 
 	}
 }
