@@ -14,9 +14,13 @@ vector<T> tokenize(string s) {
 	string t;
 	for (int i = 0; is >> t; ++i) {
 		if(!t.compare(0,1,"["))
-                t.erase(t.begin());
-        if(!t.compare(t.length()-1, 1, "]"))
-                t.erase(t.end()-1);
+			t.erase(t.begin());
+		if(!t.compare(t.length()-1, 1, "]"))
+			t.erase(t.end()-1);
+		if(!t.compare(0,1,"\""))
+			t.erase(t.begin());
+		if(!t.compare(t.length()-1, 1, "\""))
+			t.erase(t.end()-1);
 		res.emplace_back(i, t);
 	}
 	return res;
@@ -42,7 +46,7 @@ void loadRegexTemplate(const string & file) {
 	}
 }
 vector<vector<T>> transformLogs(vector<vector<T>> & logs) {
-	
+
 	vector<vector<T>> res;
 	for (auto & i : logs) {
 		res.push_back(vector<T>());
@@ -71,10 +75,10 @@ int main(int cnt, char * args[])
 		vector<vector<T>> transformed = transformLogs(logs);
 		HMM<T> hmm;
 		/*for (auto i = transformed.begin(); i != transformed.end(); ++i) {
-			for (auto j = i->begin(); j != i->end(); ++j) {
-				cout<<j->first<<"\t"<<j->second<<"\n";
-			}
-		}*/
+		  for (auto j = i->begin(); j != i->end(); ++j) {
+		  cout<<j->first<<"\t"<<j->second<<"\n";
+		  }
+		  }*/
 		hmm.Train(ufile, tfile);
 
 		hmm.TagLogs(logs, reg);
