@@ -176,6 +176,9 @@ class HMM{
 				}
 			}
 			auto k=logs.begin();
+			for(auto &i : best_score){
+				
+			}
 			for(auto i=best_score.begin(); i != best_score.end(); ++i, ++k){
 				cout<<i->first<<": ";
 				cout<<k->second<<"\t";
@@ -195,9 +198,9 @@ class HMM{
 		}
 
 		void TagLogs(vector<vector<T>> & logs, regex_key_value & reg){
-			for(auto i=logs.begin(); i!=logs.end(); ++i){
+			for(auto & i : logs){ //	for(auto i=logs.begin(); i!=logs.end(); ++i){
 				//RegexKey(*i, reg);
-				ForwardViterbi(*i);
+				ForwardViterbi(i);
 			}
 
 		}
