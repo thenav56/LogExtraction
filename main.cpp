@@ -2,7 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include "HMM.h"
-//#include "regex_key_value.h"
+#include "regex_key_value.h"
 
 using namespace std;
 
@@ -65,7 +65,7 @@ vector<vector<T>> transformLogs(vector<vector<T>> & logs) {
 int main(int cnt, char * args[])
 {
 	if(cnt<4){
-		cout<<"Hidden Markov Model Implementation\n";
+		cout<<"Minor Project\n";
 		cout<<"Usage: Program-name training-file tagging-file\n";
 	} else{
 		reg.readFromFile("regex.tl");
@@ -80,7 +80,6 @@ int main(int cnt, char * args[])
 		  }
 		  }*/
 		hmm.Train(ufile, tfile);
-
 		hmm.TagLogs(logs, reg);
 
 	}
