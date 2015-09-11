@@ -182,7 +182,6 @@ struct FPTree {
 			mine(P, pattern_bin);
 		}
 		
-		
 		void traverse() const {
 			std::vector<std::pair<int, T>> P;
 			if (root) print(root, P);

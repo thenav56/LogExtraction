@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "HMM.h"
-#include "regex_key_value.h"
+#include "include/HMM.h"
+#include "include/regex_key_value.h"
+#include "include/fptree.h"
+#include "include/cluster.h"
 
 using namespace std;
 
@@ -13,15 +15,7 @@ vector<T> tokenize(string s) {
 	vector<T> res;
 	string t;
 	for (int i = 0; is >> t; ++i) {
-		if(!t.compare(0,1,"["))
-			t.erase(t.begin());
-		if(!t.compare(t.length()-1, 1, "]"))
-			t.erase(t.end()-1);
-		if(!t.compare(0,1,"\""))
-			t.erase(t.begin());
-		if(!t.compare(t.length()-1, 1, "\""))
-			t.erase(t.end()-1);
-		res.emplace_back(i, t);
+		res.push_back(make_pair(i, t));
 	}
 	return res;
 }
@@ -45,9 +39,10 @@ void loadRegexTemplate(const string & file) {
 		reg.add(a, b);
 	}
 }
-vector<vector<T>> transformLogs(vector<vector<T>> & logs) {
 
+vector<vector<T>> transformLogs(const vector<vector<T>> & logs) {
 	vector<vector<T>> res;
+	loadRegexTemplate("regex.tl");
 	for (auto & i : logs) {
 		res.push_back(vector<T>());
 		for (auto & j : i) {
@@ -62,17 +57,24 @@ vector<vector<T>> transformLogs(vector<vector<T>> & logs) {
 	return res;
 }
 
-int main(int cnt, char * args[])
-{
-	if(cnt<4){
+vector<vector<T>> transform2(const vector<vector<T>> & logs) {
+	vector<vector<T>> res;
+	for (auto & i : logs) {
+		res.push_back(vector<T>());
+		for (int j = 0; j < (int)i.size(); ++j) {
+			res.back().emplace_back(j, std::to_string(i[j].first));
+		}
+	}
+	return res;
+}
+int main(int cnt, char * args[]) {
+	if(cnt <= 4){
 		cout<<"Minor Project\n";
-		cout<<"Usage: Program-name training-file tagging-file\n";
+		cout<<"Usage: Program-name untagged tagged logs support\n";
 	} else{
-		reg.readFromFile("regex.tl");
 		vector<vector<T>> ufile = read(args[1]);
 		vector<vector<T>> tfile = read(args[2]);
 		vector<vector<T>> logs = read(args[3]);
-		vector<vector<T>> transformed = transformLogs(logs);
 		HMM<T> hmm;
 		/*for (auto i = transformed.begin(); i != transformed.end(); ++i) {
 		  for (auto j = i->begin(); j != i->end(); ++j) {
@@ -80,7 +82,21 @@ int main(int cnt, char * args[])
 		  }
 		  }*/
 		hmm.Train(ufile, tfile);
-		hmm.TagLogs(logs, reg);
-
+		map<int, string> tagcodemap;
+		vector<vector<T>> transformed = transform2(hmm.TagLogs(logs, tagcodemap));		
+		//FP GROWTH PART FOR CLUSTERING after classification
+		int s = atoi(args[4]);
+		FPTree<T> tree(s);
+		//consider the position of token in the line
+		tree.build(transformed);
+		std::vector<std::vector<T>> r;
+		clock_t t = clock();
+		tree.mine(r);
+		std::cout<<"Initial pattern no: "<<r.size()<<"\n";
+		Cluster<T> data;
+		data.AssociatePatterns(transformed, r);
+		cout << "Time: " << double(clock() - t) / CLOCKS_PER_SEC << "\n";
+		data.DisplayCluster(logs, transformed, r, tagcodemap);
 	}
+	return 0;
 }

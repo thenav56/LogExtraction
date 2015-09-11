@@ -59,10 +59,10 @@ class Cluster{
 			return std::make_pair(t, s);
 		}
 		void DisplayCluster(
-				std::vector<std::vector<T>> & original, 
-				std::vector<std::vector<T>> logs, 
-				std::vector<std::vector<T>> & pattern_bin,
-				regex_key_value & reg) {
+				const std::vector<std::vector<T>> & original, 
+				const std::vector<std::vector<T>> & logs, 
+				const std::vector<std::vector<T>> & pattern_bin,
+				std::map<int, std::string> & mp) {
 			for(auto i : logsWithPattern){
 				std::vector<bool> column(1000,0);
 				std::cout<<"Cluster Pattern: \n";
@@ -73,7 +73,7 @@ class Cluster{
 					if (column[j->first]) {
 						std::pair<int, std::string> t = breakToken(j->second);
 						if (t.first == -1) std::cout << "[" << t.second << "]";
-						else std::cout << reg.gettype(t.first);
+						else std::cout << mp[t.first];
 					} else std::cout << "#";
 					std::cout << " ";
 				}

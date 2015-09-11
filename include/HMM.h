@@ -127,7 +127,7 @@ class HMM{
 			}
 		}
 
-		vector<T> ForwardViterbi(vector<T> & logs){
+		vector<T> ForwardViterbi(const vector<T> & logs){
 			/*
 			//From REgex
 			for(auto i=logs.begin(); i!=logs.end(); ++i){
@@ -189,8 +189,6 @@ class HMM{
 				//cout<<i->first<<": ";
 				//cout<<k->second<<"\t";
 			}
-			cout<<"\n";
-			cout<<"\n";
 			best_score.clear();
 			key.clear();
 			return tagline;
@@ -204,20 +202,24 @@ class HMM{
 
 		}
 
-		void TagLogs(vector<vector<T>> & logs, regex_key_value & reg){
+		vector<vector<T>> TagLogs(const vector<vector<T>> & logs, map<int, string> & mp){
 			vector<vector<T>> taglist;	
+
 			for(auto & i : logs){ //	for(auto i=logs.begin(); i!=logs.end(); ++i){
 				//RegexKey(*i, reg);
 				taglist.push_back(ForwardViterbi(i));
-			}
-			for(auto & i : taglist){
-				for (auto & j : i){
-					cout<<j.first<<" ";
-					cout<<j.second<<"\t";
+				for (auto & j : taglist.back()) {
+					mp[j.first] = j.second;
 				}
-				cout<<"\n";
 			}
-
+			//for(auto & i : taglist){
+			//	for (auto & j : i){
+			//		cout<<j.first<<" ";
+			//		cout<<j.second<<"\t";
+			//	}
+			//	cout<<"\n";
+			//}
+			return taglist;
 		}
 
 };
