@@ -118,9 +118,16 @@ class HMM{
 					}
 				}
 			}
+
+			//restoring tag_id in tags(int) 
+			int nn = 0;
+			for(auto i = tags.begin(); i!=tags.end(); ++i){
+				tags[i->first] = nn;
+				nn++;
+			}
 		}
 
-		void ForwardViterbi(vector<T> & logs){
+		vector<T> ForwardViterbi(vector<T> & logs){
 			/*
 			//From REgex
 			for(auto i=logs.begin(); i!=logs.end(); ++i){
@@ -134,6 +141,7 @@ class HMM{
 			key.push_back(make_pair("", -1));
 			}*/
 			//map<pair<int,string>, double>::iterator it = best_score.begin();
+			vector<T> tagline;
 			for(auto i=logs.begin(); i!=logs.end(); ++i){
 				best_score.push_back(make_pair("",0.0));
 				int feature_id = FindFeature(i->second);
@@ -176,17 +184,16 @@ class HMM{
 				}
 			}
 			auto k=logs.begin();
-			for(auto &i : best_score){
-				
-			}
 			for(auto i=best_score.begin(); i != best_score.end(); ++i, ++k){
-				cout<<i->first<<": ";
-				cout<<k->second<<"\t";
+				tagline.push_back(make_pair(tags[i->first], i->first));
+				//cout<<i->first<<": ";
+				//cout<<k->second<<"\t";
 			}
 			cout<<"\n";
 			cout<<"\n";
 			best_score.clear();
 			key.clear();
+			return tagline;
 		}
 		void RegexKey(vector<T> & logs, regex_key_value & reg) {
 
@@ -198,9 +205,17 @@ class HMM{
 		}
 
 		void TagLogs(vector<vector<T>> & logs, regex_key_value & reg){
+			vector<vector<T>> taglist;	
 			for(auto & i : logs){ //	for(auto i=logs.begin(); i!=logs.end(); ++i){
 				//RegexKey(*i, reg);
-				ForwardViterbi(i);
+				taglist.push_back(ForwardViterbi(i));
+			}
+			for(auto & i : taglist){
+				for (auto & j : i){
+					cout<<j.first<<" ";
+					cout<<j.second<<"\t";
+				}
+				cout<<"\n";
 			}
 
 		}
