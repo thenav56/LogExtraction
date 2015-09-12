@@ -5,6 +5,7 @@
 #include "include/regex_key_value.h"
 #include "include/fptree.h"
 #include "include/cluster.h"
+#include "include/Analyze.h"
 
 using namespace std;
 
@@ -83,7 +84,8 @@ int main(int cnt, char * args[]) {
 		  }*/
 		hmm.Train(ufile, tfile);
 		map<int, string> tagcodemap;
-		vector<vector<T>> transformed = transform2(hmm.TagLogs(logs, tagcodemap));		
+		vector<vector<T>> taglist = hmm.TagLogs(logs, tagcodemap);
+		vector<vector<T>> transformed = transform2(taglist);		
 		//FP GROWTH PART FOR CLUSTERING after classification
 		int s = atoi(args[4]);
 		FPTree<T> tree(s);
@@ -97,6 +99,9 @@ int main(int cnt, char * args[]) {
 		data.AssociatePatterns(transformed, r);
 		cout << "Time: " << double(clock() - t) / CLOCKS_PER_SEC << "\n";
 		data.DisplayCluster(logs, transformed, r, tagcodemap);
+		Analyze<T> analyze;
+		vector<vector<T>> manual = read("manual");
+		cout<<"\n"<<analyze.Efficiency(taglist, manual);
 	}
 	return 0;
 }
