@@ -1,9 +1,11 @@
+#ifndef REGEX_KEY_VALUE_H
+#define REGEX_KEY_VALUE_H
 #include <iostream>
 #include <map>
 #include <regex>
 #include <boost/regex.hpp>
 
-namespace std_boost = std ; 
+namespace std_boost = std ;
 
 typedef std::pair<std::string, std::string> regexPair  ;
 typedef std::map<int,regexPair>::iterator regexMap_itr ;
@@ -13,6 +15,7 @@ class regex_key_value
 {
 	private:
 		regexMap regMap ;
+		int regex_count =  0 ;
 
 	public:
 
@@ -38,14 +41,27 @@ class regex_key_value
 
 		void add(std::string ty , std::string rx){
 			regMap.insert(std::make_pair(regMap.size(),regexPair(ty,rx))) ;
+			regex_count++ ;
 		}
+
+		int get_regex_count(){
+			return regex_count ;
+		}
+
 		std::string getRegex(int key){
-			regexPair regexP =  regMap.find(key)->second ;
-			return std::get<1>(regexP) ;
+			if(key<regex_count){
+				regexPair regexP =  regMap.find(key)->second ;
+				return regexP.second ;
+			}
+				return "Not Found" ;
 		}
+
 		std::string gettype(int key){
-			regexPair regexP =  regMap.find(key)->second ;
-			return std::get<0>(regexP) ;
+			if(key<regex_count){
+				regexPair regexP =  regMap.find(key)->second ;
+				return regexP.first ;
+			}
+				return "Not Found" ;
 		}
 		std::pair<int,std::string> doRegex(std::string token){
 			for(regexMap_itr itr = regMap.begin() ; itr != regMap.end(); itr++ ){
@@ -103,3 +119,5 @@ class regex_key_value
 		}
 
 };
+
+#endif

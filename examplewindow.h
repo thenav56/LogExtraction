@@ -7,16 +7,7 @@
 class ExampleWindow : public Gtk::Window
 {
 public:
- ExampleWindow(regex_key_value reg = NULL){
-   if(reg){
-     Gtk::TreeModel::Row row = *(refTreeModel->append());
-     int rowcount = 1 ;
-     //for()
-     row[columns.col_cnt] = rowcount;
-     row[columns.col_text] = text->get_text();
-     row[columns.col_text2] = text2->get_text();
-  }
- };
+ ExampleWindow(regex_key_value reg);
  virtual ~ExampleWindow();
  Gtk::TreeView *treeview;
  Gtk::Label *label,*label2, *label3, *label4,m_Label_Normal;
