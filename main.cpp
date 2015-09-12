@@ -6,6 +6,7 @@
 #include "include/fptree.h"
 #include "include/cluster.h"
 #include "include/Analyze.h"
+#include "include/examplewindow.h"
 
 using namespace std;
 
@@ -43,7 +44,7 @@ void loadRegexTemplate(const string & file) {
 
 vector<vector<T>> transformLogs(const vector<vector<T>> & logs) {
 	vector<vector<T>> res;
-	loadRegexTemplate("regex.tl");
+	//loadRegexTemplate("regex.tl");
 	for (auto & i : logs) {
 		res.push_back(vector<T>());
 		for (auto & j : i) {
@@ -68,12 +69,9 @@ vector<vector<T>> transform2(const vector<vector<T>> & logs) {
 	}
 	return res;
 }
-int main(int cnt, char * args[]) {
-	if(cnt <= 4){
-		cout<<"Minor Project\n";
-		cout<<"Usage: Program-name untagged tagged logs support\n";
-	} else{
-		vector<vector<T>> ufile = read(args[1]);
+
+int main_run(char * args[]){
+	vector<vector<T>> ufile = read(args[1]);
 		vector<vector<T>> tfile = read(args[2]);
 		vector<vector<T>> logs = read(args[3]);
 		HMM<T> hmm;
@@ -85,7 +83,7 @@ int main(int cnt, char * args[]) {
 		hmm.Train(ufile, tfile);
 		map<int, string> tagcodemap;
 		vector<vector<T>> taglist = hmm.TagLogs(logs, tagcodemap);
-		vector<vector<T>> transformed = transform2(taglist);		
+		vector<vector<T>> transformed = transform2(taglist);
 		//FP GROWTH PART FOR CLUSTERING after classification
 		int s = atoi(args[4]);
 		FPTree<T> tree(s);
@@ -102,6 +100,14 @@ int main(int cnt, char * args[]) {
 		Analyze<T> analyze;
 		vector<vector<T>> manual = read("manual");
 		cout<<"\n"<<analyze.Efficiency(taglist, manual);
-	}
+}
+int main(int cnt, char * args[]) {
+	Gtk::Main kit(cnt, args);
+	reg.readFromFile("regex.tl") ;
+	ExampleWindow window(reg);
+	//Shows the window and returns when it is closed.
+	Gtk::Main::run(window);
+	char *arg[] = {"programname","untagged","tagged","logs"} ;
+	main_run(arg) ;
 	return 0;
 }
