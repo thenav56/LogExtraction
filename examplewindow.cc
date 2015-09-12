@@ -5,9 +5,11 @@
 #include "examplewindow.h"
 #include <gtkmm/stock.h>
 #include <iostream>
-ExampleWindow::ExampleWindow(regex_key_value reg)
+
+
+ExampleWindow::ExampleWindow()
 		: m_Box(Gtk::ORIENTATION_VERTICAL),m_VBox(Gtk::ORIENTATION_VERTICAL),m_HBox(Gtk::ORIENTATION_VERTICAL),
-		m_frame("Data from file :"),m_Alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER, 1.0, 0.0)
+		m_frame("Data from file :"),o_frame("Output from file :"),m_Alignment(Gtk::ALIGN_END, Gtk::ALIGN_CENTER, 1.0, 0.0)
 {
 		set_title("Key Value Extraction");
 		set_default_size(800, 600);
@@ -17,9 +19,13 @@ ExampleWindow::ExampleWindow(regex_key_value reg)
 		//Create actions for menus and toolbars:
 		m_refActionGroup = Gtk::ActionGroup::create();
 		//File|New sub menu:
+		// m_refActionGroup->add(Gtk::Action::create("FileNewStandard",
+		// 						Gtk::Stock::NEW, "_New", "Create a new file"),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new_generic));
 		m_refActionGroup->add(Gtk::Action::create("FileNewStandard",
-								Gtk::Stock::NEW, "_New", "Create a new file"),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new_generic));
+								Gtk::Stock::NEW, "_New", "Output"),
+						sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
+
 
 		//file menu subgroups
 		m_refActionGroup->add(Gtk::Action::create("FileNewFoo",
@@ -141,6 +147,7 @@ ExampleWindow::ExampleWindow(regex_key_value reg)
 		//Add the Notebook pages:
 		m_Notebook.append_page(m_grid, "Regex");
 		m_Notebook.append_page(m_grid2, "Log File");
+		m_Notebook.append_page(m_grid3, "Output");
 		m_Notebook.signal_switch_page().connect(sigc::mem_fun(*this, &ExampleWindow::on_notebook_switch_page) );
 
 
@@ -182,9 +189,13 @@ ExampleWindow::ExampleWindow(regex_key_value reg)
 		b_add->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_add_data_click));
 		m_grid.attach(*b_add, 2, 8, 1, 1);
 
-		Gtk::Button *b_output = Gtk::manage(new Gtk::Button("Press here for output"));
-		b_output->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
-		m_grid.attach(*b_output, 2, 10, 1, 1);
+		Gtk::Button *b_remove = Gtk::manage(new Gtk::Button("Click to remove"));
+		b_remove->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_delete_data_click));
+		m_grid.attach(*b_remove, 2, 10, 1, 1);
+
+		// Gtk::Button *b_output = Gtk::manage(new Gtk::Button("Press here for output"));
+		// b_output->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
+		// m_grid.attach(*b_output, 2, 10, 1, 1);
 
 
 		m_grid.show_all();
@@ -234,10 +245,10 @@ ExampleWindow::ExampleWindow(regex_key_value reg)
 		m_frame.add(editor_ScrolledWindow) ;
 		m_frame.set_hexpand(true);
 		m_frame.set_vexpand(true);
-		Gtk::Button *m_Button = Gtk::manage(new Gtk::Button("Output"));
-		m_Button->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
+		// Gtk::Button *m_Button = Gtk::manage(new Gtk::Button("Output"));
+		// m_Button->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
 		//m_frame.set_label_align(Gtk::ALIGN_END, Gtk::ALIGN_START);
-		m_grid2.attach(*m_Button,40,1,20,1);
+		//m_grid2.attach(*m_Button,40,1,20,1);
 		//m_Alignment.add(*m_Button);
 		m_frame.add(m_Alignment);
 		m_frame.set_shadow_type(Gtk::SHADOW_ETCHED_OUT);
@@ -248,7 +259,45 @@ ExampleWindow::ExampleWindow(regex_key_value reg)
 
 		m_grid2.show_all();
 
+		//-----------------------------------------------------------------------------------
+		add(m_grid3);
 
+		m_grid3.set_border_width(20);
+		m_grid3.set_row_spacing(5);
+		m_Box.add(m_grid3);
+
+		add(m_HBox);
+		add(o_Alignment);
+		m_HBox.pack_start(m_VBox);
+		m_grid3.attach(o_frame, 0,5,200,100);
+
+		_output = Gtk::manage(new Gtk::TextView) ;
+		_output_buffer = Gtk::TextBuffer::create() ;
+		_output->set_buffer(_output_buffer) ;
+		_output->set_cursor_visible(true) ;
+		_output_ScrolledWindow.add(*_output)  ;
+		//Only show the scrollbars when they are necessary:
+		_output_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+		o_frame.add(_output_ScrolledWindow) ;
+		o_frame.set_hexpand(true);
+		o_frame.set_vexpand(true);
+		Gtk::Button *analyse_Button = Gtk::manage(new Gtk::Button("Analyse"));
+		analyse_Button->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_analyse_click));
+		//o_frame.set_label_align(Gtk::ALIGN_START,Gtk::ALIGN_END);
+		//attach (Widget& child, int left, int top, int width, int height)
+		m_grid3.attach(*analyse_Button,100,110,100,1);
+		o_Alignment.add(*analyse_Button);
+		o_frame.add(o_Alignment);
+		o_frame.set_shadow_type(Gtk::SHADOW_ETCHED_OUT);
+		o_Alignment.show_all();
+		m_HBox.show_all();
+
+
+
+		m_grid3.show_all();
+
+		//---------------------------------------------------------------------------------------------
+		reg.readFromFile("regex.tl") ;
 		show_all_children();
       rowcount = 0 ;
       for(; rowcount < reg.get_regex_count();rowcount++){
@@ -257,6 +306,8 @@ ExampleWindow::ExampleWindow(regex_key_value reg)
         row[columns.col_text] = reg.gettype(rowcount);
         row[columns.col_text2] = reg.getRegex(rowcount);
     }
+
+
 }
 
 
@@ -369,15 +420,29 @@ void ExampleWindow::on_menu_file_new_generic()
 }
 void ExampleWindow::on_menu_others()
 {
+
 		std::cout << "A menu item was selected." << std::endl;
+}
+
+void ExampleWindow::on_button_delete_data_click(){
+	// Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = treeview->get_selection();
+	// Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
+	// if(iter){  //If anything is selected
+	// 	Gtk::TreeModel::Row row = *iter;
+	// 	//row.remove();
+	// 	}
+
+
 }
 
 void ExampleWindow::on_button_add_data_click()
 {
 
-		if(text->get_text_length() == 0 or text2->get_text_length() == 0)
+		if(text->get_text_length() == 0 or text2->get_text_length() == 0){
 				dialog("ERROR:: Enter valid data");
-		else
+				label->set_markup("<b><span color='red'>Enter Datatype: </span></b>");
+				label2->set_markup("<b><span color='red'>Enter Regex Data: </span></b>");
+		}else
 		{
 
 				label->set_markup("<b><span color='black'>Enter Datatype: </span></b>");
@@ -389,17 +454,39 @@ void ExampleWindow::on_button_add_data_click()
 				row[columns.col_cnt] = rowcount;
 				row[columns.col_text] = text->get_text();
 				row[columns.col_text2] = text2->get_text();
+
         rowcount++;
+				std::cout<<text->get_text()<<text2->get_text()<<std::endl ;
+				reg.add(text->get_text(),text2->get_text() ) ;
 		}
 }
 
 void ExampleWindow::on_button_output_click()
 {
 		dialog("Clustered Output");
+		std::string file_text = "THe Output Should Be Here" ;
+		_output_buffer->set_text(file_text) ;
+		//run the program here
+
+		std::string filename = "regex.tl" ;
+		std::ifstream file_load(filename.c_str());
+		if(file_load.is_open()){
+				std::string _temp ;
+				Glib::ustring file_text = "" ;
+				while(std::getline(file_load,_temp)){
+						file_text += _temp+'\n' ;
+				}
+				_output_buffer->set_text(file_text) ;
+		}
+		m_Notebook.set_current_page(2);
 }
 void ExampleWindow::on_quit_click()
 {
 		hide();
+}
+
+void ExampleWindow::on_button_analyse_click(){
+
 }
 void ExampleWindow::dialog(Glib::ustring msg)
 {

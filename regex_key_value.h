@@ -36,16 +36,24 @@ class regex_key_value
 				    break ;
 				}
 			    }
-
 			}
 
 		void add(std::string ty , std::string rx){
-			regMap.insert(std::make_pair(regMap.size(),regexPair(ty,rx))) ;
+			auto regMap_key = regMap.end()->first;
+			regMap.insert(std::make_pair(regMap_key,regexPair(ty,rx))) ;
 			regex_count++ ;
 		}
 
 		int get_regex_count(){
 			return regex_count ;
+		}
+
+		bool remove_regex(int key){
+			if(regMap.erase(key)){
+				regex_count-- ;
+				return true;
+				}
+			return false ;
 		}
 
 		std::string getRegex(int key){

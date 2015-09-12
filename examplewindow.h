@@ -7,17 +7,20 @@
 class ExampleWindow : public Gtk::Window
 {
 public:
- ExampleWindow(regex_key_value reg);
+ ExampleWindow();
  virtual ~ExampleWindow();
+ //regex
+ regex_key_value reg ;
+ //Gtk
  Gtk::TreeView *treeview;
  Gtk::Label *label,*label2, *label3, *label4,m_Label_Normal;
- Gtk::TextView *editor ;
- Glib::RefPtr<Gtk::TextBuffer> editor_buffer ;
- Gtk::ScrolledWindow editor_ScrolledWindow , treeview_ScrolledWindow;
+ Gtk::TextView *editor , *_output ;
+ Glib::RefPtr<Gtk::TextBuffer> editor_buffer , _output_buffer;
+ Gtk::ScrolledWindow editor_ScrolledWindow , treeview_ScrolledWindow , _output_ScrolledWindow;
  Gtk::Entry m_Entry,*text,*text2,*text3, get_text;
- Gtk::Grid m_grid,m_grid2;
- Gtk::Frame m_frame;
- Gtk::Alignment m_Alignment;
+ Gtk::Grid m_grid,m_grid2,m_grid3;
+ Gtk::Frame m_frame , o_frame;
+ Gtk::Alignment m_Alignment,o_Alignment;
 protected:
  //Signal handlers:
  void on_menu_file_new_generic();
@@ -35,6 +38,8 @@ protected:
  void on_button_enterhere_click();
  void on_button_output_click();
  void on_button_add_data_click();
+ void on_button_delete_data_click();
+ void on_button_analyse_click() ;
  void on_quit_click();
  void on_output_from_file();
  void dialog(Glib::ustring msg);
