@@ -42,7 +42,9 @@ protected:
  void on_button_analyse_click() ;
  void on_quit_click();
  void on_output_from_file();
- void dialog(Glib::ustring msg);
+ void on_menu_about() ;
+ void on_menu_help() ;
+ void dialog(Glib::ustring msg , Gtk::MessageType);
  void on_notebook_switch_page(Gtk::Widget* page, int page_num);
  //Printing-related objects:
 class ModelColumns : public Gtk::TreeModel::ColumnRecord

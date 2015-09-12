@@ -1,5 +1,5 @@
 /*
-   g++ -std=c++11 main.cc examplewindow.cc -o main `pkg-config --libs --cflags gtkmm-3.0`
+   g++ -std=c++11 main.cpp examplewindow.cpp -o main `pkg-config --libs --cflags gtkmm-3.0`
    */
 
 #include "examplewindow.h"
@@ -23,21 +23,21 @@ ExampleWindow::ExampleWindow()
 		// 						Gtk::Stock::NEW, "_New", "Create a new file"),
 		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new_generic));
 		m_refActionGroup->add(Gtk::Action::create("FileNewStandard",
-								Gtk::Stock::NEW, "_New", "Output"),
+								Gtk::Stock::EXECUTE, "_New", "Output"),
 						sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
 
 
 		//file menu subgroups
-		m_refActionGroup->add(Gtk::Action::create("FileNewFoo",
-								Gtk::Stock::NEW, "New Foo", "Create a new foo"),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new_generic));
-		m_refActionGroup->add(Gtk::Action::create("FileNewGoo",
-								Gtk::Stock::NEW, "_New Goo", "Create a new goo"),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new_generic));
+		// m_refActionGroup->add(Gtk::Action::create("FileNewFoo",
+		// 						Gtk::Stock::NEW, "New Foo", "Create a new foo"),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new_generic));
+		// m_refActionGroup->add(Gtk::Action::create("FileNewGoo",
+		// 						Gtk::Stock::NEW, "_New Goo", "Create a new goo"),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_file_new_generic));
 		//File menu:
 		m_refActionGroup->add(Gtk::Action::create("FileMenu", "File"));
 		//Sub-menu.
-		m_refActionGroup->add(Gtk::Action::create("FileNew", Gtk::Stock::NEW));
+		//m_refActionGroup->add(Gtk::Action::create("FileNew", Gtk::Stock::NEW));
 
 		m_refActionGroup->add(Gtk::Action::create("FileOpen",
 								Gtk::Stock::OPEN, "_Open", "Open File"),
@@ -46,14 +46,14 @@ ExampleWindow::ExampleWindow()
 		m_refActionGroup->add(Gtk::Action::create("FileSave",
 								Gtk::Stock::SAVE, "_Save", "Save File"),
 						sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
-		m_refActionGroup->add(Gtk::Action::create("FilePageSetup", Gtk::Stock::PRINT,"Page Setup"),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_file_quit));
-		m_refActionGroup->add(Gtk::Action::create("FilePrintPreview", Gtk::Stock::PRINT, "Print Preview"),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_file_quit));
+		// m_refActionGroup->add(Gtk::Action::create("FilePageSetup", Gtk::Stock::PRINT,"Page Setup"),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_file_quit));
+		// m_refActionGroup->add(Gtk::Action::create("FilePrintPreview", Gtk::Stock::PRINT, "Print Preview"),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_file_quit));
 
-		m_refActionGroup->add(Gtk::Action::create("FilePrint",
-								Gtk::Stock::PRINT,"_Print","Print"),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
+		// m_refActionGroup->add(Gtk::Action::create("FilePrint",
+		// 						Gtk::Stock::PRINT,"_Print","Print"),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
 
 
 		m_refActionGroup->add(Gtk::Action::create("FileQuit",
@@ -62,20 +62,23 @@ ExampleWindow::ExampleWindow()
 		//m_refActionGroup->add(Gtk::Action::create("FileQuit", Gtk::Stock::QUIT),
 		//sigc::mem_fun(*this, &ExampleWindow::on_menu_file_quit));
 		//Edit menu:
-		m_refActionGroup->add(Gtk::Action::create("EditMenu", "Edit"));
-		m_refActionGroup->add(Gtk::Action::create("EditCut", Gtk::Stock::CUT),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
-		m_refActionGroup->add(Gtk::Action::create("EditCopy", Gtk::Stock::COPY),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
-		m_refActionGroup->add(Gtk::Action::create("EditPaste", Gtk::Stock::PASTE),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
-		m_refActionGroup->add(Gtk::Action::create("EditUndo", Gtk::Stock::UNDO),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
-		m_refActionGroup->add(Gtk::Action::create("EditRedo", Gtk::Stock::REDO),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
-		m_refActionGroup->add( Gtk::Action::create("HelpMenu", "Help") );
-		m_refActionGroup->add( Gtk::Action::create("HelpAbout", Gtk::Stock::HELP),
-						sigc::mem_fun(*this, &ExampleWindow::on_menu_others) );
+		// m_refActionGroup->add(Gtk::Action::create("EditMenu", "Edit"));
+		// m_refActionGroup->add(Gtk::Action::create("EditCut", Gtk::Stock::CUT),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
+		// m_refActionGroup->add(Gtk::Action::create("EditCopy", Gtk::Stock::COPY),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
+		// m_refActionGroup->add(Gtk::Action::create("EditPaste", Gtk::Stock::PASTE),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
+		// m_refActionGroup->add(Gtk::Action::create("EditUndo", Gtk::Stock::UNDO),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
+		// m_refActionGroup->add(Gtk::Action::create("EditRedo", Gtk::Stock::REDO),
+		// 				sigc::mem_fun(*this, &ExampleWindow::on_menu_others));
+		//
+		m_refActionGroup->add( Gtk::Action::create("HelpMenu", "More") );
+		m_refActionGroup->add( Gtk::Action::create("About", Gtk::Stock::ABOUT),
+						sigc::mem_fun(*this, &ExampleWindow::on_menu_about) );
+						m_refActionGroup->add( Gtk::Action::create("Help", Gtk::Stock::ABOUT,"_Help","Help"),
+										sigc::mem_fun(*this, &ExampleWindow::on_menu_help) );
 		m_refUIManager = Gtk::UIManager::create();
 		m_refUIManager->insert_action_group(m_refActionGroup);
 		add_accel_group(m_refUIManager->get_accel_group());
@@ -86,27 +89,28 @@ ExampleWindow::ExampleWindow()
 				"<ui>"
 				" <menubar name='MenuBar'>"
 				" <menu action='FileMenu'>"
-				" <menu action='FileNew'>"
-				" <menuitem action='FileNewStandard'/>"
-				" <menuitem action='FileNewFoo'/>"
-				" <menuitem action='FileNewGoo'/>"
-				" </menu>"
+				//" <menu action='FileNew'>"
+				//" <menuitem action='FileNewStandard'/>"
+				//" <menuitem action='FileNewFoo'/>"
+				//" <menuitem action='FileNewGoo'/>"
+				//" </menu>"
 				" <menuitem action='FileOpen'/>"
 				" <menuitem action='FileSave'/>"
-				" <menuitem action='FilePageSetup'/>"
-				" <menuitem action='FilePrintPreview'/>"
-				" <menuitem action='FilePrint'/>"
+				//" <menuitem action='FilePageSetup'/>"
+				//" <menuitem action='FilePrintPreview'/>"
+				//" <menuitem action='FilePrint'/>"
 				" <menuitem action='FileQuit'/>"
 				" </menu>"
-				" <menu action='EditMenu'>"
-				" <menuitem action='EditCut'/>"
-				" <menuitem action='EditCopy'/>"
-				" <menuitem action='EditPaste'/>"
-				" <menuitem action='EditUndo'/>"
-				" <menuitem action='EditRedo'/>"
-				" </menu>"
+				//" <menu action='EditMenu'>"
+				//" <menuitem action='EditCut'/>"
+				//" <menuitem action='EditCopy'/>"
+				//" <menuitem action='EditPaste'/>"
+				//" <menuitem action='EditUndo'/>"
+				//" <menuitem action='EditRedo'/>"
+				//" </menu>"
 				" <menu action='HelpMenu'>"
-				" <menuitem action='HelpAbout'/>"
+				" <menuitem action='About'/>"
+				" <menuitem action='Help'/>"
 				" </menu>"
 				" </menubar>"
 				" <toolbar name='ToolBar'>"
@@ -116,7 +120,7 @@ ExampleWindow::ExampleWindow()
 				" <separator/>"
 				" <toolitem action='FileSave'/>"
 				" <separator/>"
-				" <toolitem action='FilePrint'/>"
+			//	" <toolitem action='FilePrint'/>"
 				" <separator/>"
 				" <toolitem action='FileQuit'/>"
 				" </toolbar>"
@@ -161,6 +165,8 @@ ExampleWindow::ExampleWindow()
 		Gtk::TreeView *treeview = Gtk::manage(new Gtk::TreeView);
 		treeview->set_hexpand(true);
 		treeview->set_vexpand(true);
+		//treeview->get_selection()->set_mode(Gtk::SELECTION_MULTIPLE) ;
+		treeview->set_search_column(columns.col_cnt) ;
 		treeview_ScrolledWindow.add(*treeview)  ;
 		//Only show the scrollbars when they are necessary:
 		treeview_ScrolledWindow.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
@@ -191,7 +197,7 @@ ExampleWindow::ExampleWindow()
 
 		Gtk::Button *b_remove = Gtk::manage(new Gtk::Button("Click to remove"));
 		b_remove->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_delete_data_click));
-		m_grid.attach(*b_remove, 2, 10, 1, 1);
+		//m_grid.attach(*b_remove, 2, 10, 1, 1);
 
 		// Gtk::Button *b_output = Gtk::manage(new Gtk::Button("Press here for output"));
 		// b_output->signal_clicked().connect(sigc::mem_fun(*this, &ExampleWindow::on_button_output_click));
@@ -425,8 +431,9 @@ void ExampleWindow::on_menu_others()
 }
 
 void ExampleWindow::on_button_delete_data_click(){
-	// Glib::RefPtr<Gtk::TreeSelection> refTreeSelection = treeview->get_selection();
-	// Gtk::TreeModel::iterator iter = refTreeSelection->get_selected();
+	auto path = treeview->get_selection()->get_selected();
+	//auto iter = refTreeModel->get_iter(path) ;
+	//refTreeModel->erase(iter) ;
 	// if(iter){  //If anything is selected
 	// 	Gtk::TreeModel::Row row = *iter;
 	// 	//row.remove();
@@ -439,7 +446,7 @@ void ExampleWindow::on_button_add_data_click()
 {
 
 		if(text->get_text_length() == 0 or text2->get_text_length() == 0){
-				dialog("ERROR:: Enter valid data");
+				dialog("ERROR:: Enter valid data",Gtk::MESSAGE_WARNING);
 				label->set_markup("<b><span color='red'>Enter Datatype: </span></b>");
 				label2->set_markup("<b><span color='red'>Enter Regex Data: </span></b>");
 		}else
@@ -463,7 +470,7 @@ void ExampleWindow::on_button_add_data_click()
 
 void ExampleWindow::on_button_output_click()
 {
-		dialog("Clustered Output");
+		//dialog("Clustered Output");
 		std::string file_text = "THe Output Should Be Here" ;
 		_output_buffer->set_text(file_text) ;
 		//run the program here
@@ -485,15 +492,27 @@ void ExampleWindow::on_quit_click()
 		hide();
 }
 
-void ExampleWindow::on_button_analyse_click(){
+void ExampleWindow::on_menu_help(){
 
 }
-void ExampleWindow::dialog(Glib::ustring msg)
-{
-		Gtk::MessageDialog dlg(msg, false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+
+void ExampleWindow::on_menu_about(){
+		dialog("Log Extraction(IOE MINOR PROJECT)\n\tDeveloped By\n\tUttam Khanal\n\tPrabesh Pathak\n\tPramod Maharjan\n\tNavin Ayer",Gtk::MESSAGE_INFO) ;
+}
+
+void ExampleWindow::on_button_analyse_click(){
+	Glib::ustring msg = "This is the Analysed Information Brother" ;
+	Gtk::MessageDialog dlg(msg, false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+	dlg.set_title("Output");
+	dlg.run();
+}
+
+void ExampleWindow::dialog(Glib::ustring msg, Gtk::MessageType type = Gtk::MESSAGE_INFO ){
+		Gtk::MessageDialog dlg(msg, false, type, Gtk::BUTTONS_OK, true);
 		dlg.set_title("Output");
 		dlg.run();
 }
+
 void ExampleWindow::on_notebook_switch_page(Gtk::Widget* /* page */, int page_num)
 {
 		std::cout << "Switched to tab with index " << page_num << std::endl;
