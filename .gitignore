@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+
+# others
+.temp_log_file
+
+#Swap files
+*~
