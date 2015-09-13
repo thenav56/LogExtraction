@@ -476,13 +476,13 @@ void ExampleWindow::on_button_output_click()
 		std::string file_text = "THe Output Should Be Here" ;
 		_output_buffer->set_text(file_text) ;
 		std::string _editor_buffer = editor_buffer->get_text() ;
-		std::ofstream out(".temp_log_file");
-		out<<_editor_buffer ;
-		out.close() ;
+		// std::ofstream out(".temp_log_file");
+		// out<<_editor_buffer ;
+		// out.close() ;
 		//run the program here
 		// char *arg[] = {"programname","untagged","tagged",".temp_log_file"} ;
 		// main_run(arg) ;
-		std::string filename = "regex.tl" ;
+		std::string filename = ".temp_log_file" ;
 		std::ifstream file_load(filename.c_str());
 		if(file_load.is_open()){
 				std::string _temp ;

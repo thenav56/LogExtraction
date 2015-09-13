@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <fstream>
 #include "regex_key_value.h"
 
 template <class T>
@@ -63,27 +64,36 @@ class Cluster{
 				const std::vector<std::vector<T>> & logs, 
 				const std::vector<std::vector<T>> & pattern_bin,
 				std::map<int, std::string> & mp) {
+			string outputFile = "";
 			for(auto i : logsWithPattern){
 				std::vector<bool> column(1000,0);
-				std::cout<<"Cluster Pattern: \n";
+				//std::cout<<"Cluster Pattern: \n";
+				outputFile += "\nCluster Pattern: \n";
 				for(auto j = pattern_bin[i.first].begin(); j != pattern_bin[i.first].end(); ++j){
 					column[j->first] = 1;
 				}
 				for (auto j = logs[*i.second.begin()].begin(); j != logs[*i.second.begin()].end(); ++j) {
 					if (column[j->first]) {
 						std::pair<int, std::string> t = breakToken(j->second);
-						if (t.first == -1) std::cout << "[" << t.second << "]";
-						else std::cout << mp[t.first];
-					} else std::cout << "#";
-					std::cout << " ";
+						if (t.first == -1) 
+							outputFile += "[" + t.second + "]";//std::cout << "[" << t.second << "]";
+						else 
+							outputFile += mp[t.first];//std::cout << mp[t.first];
+					} else 
+						outputFile += "#";//std::cout << "#";
+					outputFile += " ";//std::cout << " ";
 				}
-				std::cout<<"\n";
+				outputFile += "\n";//std::cout<<"\n";
 				for(auto j = i.second.begin(); j != i.second.end(); ++j){
 					for(auto k : original[*j]){
-						std::cout << k.second << " ";
+						outputFile += k.second + " ";//std::cout << k.second << " ";
 					}
-					std::cout<<"\n";
+					outputFile += "\n";//std::cout<<"\n";
 				}
 			} 
+			std::ofstream out(".temp_log_file");
+			std::cout<<outputFile ;
+			out<<outputFile;
+			out.close() ;
 		}
 };
